@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>蒼龍計畫：全域指揮官戰術終端 v8.15 (Large Font & OFI)</title>
+    <title>蒼龍計畫：全域指揮官戰術終端 v32.3 (Human Touch Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -41,6 +41,13 @@
         .neon-text-red { color: #ff6b6b; text-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
         .neon-text-green { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.4); }
         .neon-text-yellow { color: #fcd34d; text-shadow: 0 0 10px rgba(252, 211, 77, 0.4); }
+        
+        /* [v32.3] 新增避險專用色 (Amber-500) */
+        .text-hedge { 
+            color: #f59e0b; 
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3); 
+        }
+        
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
@@ -593,9 +600,24 @@
             
             const logDiv = document.createElement('div');
             logDiv.className = "flex gap-3 animate-fade-in opacity-80";
+            
+            // --- [v32.3 Patch] 智慧著色邏輯 ---
+            let msgColorClass = "text-slate-400"; // 預設灰
+            
+            // 判斷優先順序：獲利(紅) > 虧損(綠) > 避險(橘)
+            // 註：台股習慣 紅漲綠跌
+            if (logMsg.includes("獲利") || logMsg.includes("達標") || logMsg.includes("止盈") || logMsg.includes("移動停利")) {
+                msgColorClass = "text-red-400"; 
+            } else if (logMsg.includes("停損") || logMsg.includes("虧損") || logMsg.includes("損失")) {
+                msgColorClass = "text-green-400"; 
+            } else if (logMsg.includes("避險") || logMsg.includes("撤退") || logMsg.includes("強制") || logMsg.includes("平出")) {
+                msgColorClass = "text-hedge";   // [新增] 避險橘
+            }
+            // -------------------------------
+            
             logDiv.innerHTML = `
                 <div class="w-8 flex-shrink-0 text-center text-xs text-slate-600 font-mono pt-1">SYS</div>
-                <div class="text-xs font-mono text-slate-400 border-l-2 border-slate-700 pl-2 py-0.5 leading-relaxed break-all">${logMsg}</div>
+                <div class="text-xs font-mono ${msgColorClass} border-l-2 border-slate-700 pl-2 py-0.5 leading-relaxed break-all">${logMsg}</div>
             `;
             box.appendChild(logDiv);
             box.scrollTop = box.scrollHeight;
