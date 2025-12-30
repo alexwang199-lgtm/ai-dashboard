@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>蒼龍計畫：全域指揮官戰術終端 v7.3 (Ngrok Direct)</title>
+    <title>蒼龍計畫：全域指揮官戰術終端 v8.15 (Large Font & OFI)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -16,79 +16,64 @@
             --neon-yellow: #e3b341;
             --border: #30363d;
         }
-        body { background-color: var(--bg-dark); color: #c9d1d9; font-family: 'Segoe UI', "Microsoft JhengHei", system-ui, sans-serif; overflow: hidden; }
-        
+        body { 
+            background: radial-gradient(circle at center, #161b22 0%, #02040a 100%); 
+            color: #c9d1d9; 
+            font-family: 'Segoe UI', "Microsoft JhengHei", system-ui, sans-serif; 
+            overflow: hidden; 
+        }
         .cyber-section { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
         .cyber-section::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--border); opacity: 0.5; }
-        
-        .section-title { background: #161b22; padding: 6px 12px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: bold; color: #8b949e; letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-
+        /* [v8.15] 標題字體加大 */
+        .section-title { background: #161b22; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: bold; color: #8b949e; letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
         .dragon-row {
-            height: 60px; /* 增加高度以容納籌碼雷達 */
+            height: 72px; /* [v8.15] 加高行高以容納大字體 */
             border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; padding: 0 12px; gap: 12px;
+            display: flex; align-items: center; padding: 0 16px; gap: 16px;
             background: linear-gradient(90deg, #0d1117 0%, #161b22 100%);
             transition: background 0.2s;
         }
-        .dragon-row:hover { background: #1f242c; border-left: 3px solid var(--accent-blue); }
-        
+        .dragon-row:hover { background: #1f242c; border-left: 4px solid var(--accent-blue); }
         .price-line { stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .avg-line { stroke: #8b949e; stroke-width: 1.5; stroke-dasharray: 4,4; opacity: 0.5; }
-
-        .cyber-select { background-color: #0d1117; border: 1px solid var(--border); color: #c9d1d9; font-size: 12px; padding: 2px 8px; border-radius: 4px; outline: none; }
+        .cyber-select { background-color: #0d1117; border: 1px solid var(--border); color: #c9d1d9; font-size: 13px; padding: 2px 8px; border-radius: 4px; outline: none; }
         .cyber-select:focus { border-color: var(--accent-blue); }
-
-        /* 霓虹特效 */
         .neon-text-red { color: #ff6b6b; text-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
         .neon-text-green { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.4); }
         .neon-text-yellow { color: #fcd34d; text-shadow: 0 0 10px rgba(252, 211, 77, 0.4); }
-
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
-
         @keyframes pulse-glow { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } }
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
-        
-        /* 警示動畫 */
-        @keyframes flash-red { 0%, 100% { background-color: rgba(185, 28, 28, 0.2); border-color: rgba(248, 113, 113, 0.5); } 50% { background-color: rgba(185, 28, 28, 0.5); border-color: rgba(248, 113, 113, 1); } }
         .alert-flash { animation: flash-red 1s infinite; }
-
-        /* 熱度條動畫 */
-        @keyframes heat-load { from { width: 0; } }
-        .heat-bar-fill { animation: heat-load 1s ease-out forwards; }
-        
-        /* 真實能量牆樣式 (L2 Wall) */
-        .wall-container { display: flex; flex-direction: column; gap: 1px; width: 50px; height: 100%; justify-content: center; font-size: 0; }
+        @keyframes flash-red { 0%, 100% { background-color: rgba(185, 28, 28, 0.2); border-color: rgba(248, 113, 113, 0.5); } 50% { background-color: rgba(185, 28, 28, 0.5); border-color: rgba(248, 113, 113, 1); } }
+        .wall-container { display: flex; flex-direction: column; gap: 1px; width: 45px; height: 100%; justify-content: center; font-size: 0; }
         .wall-row { display: flex; height: 16%; width: 100%; align-items: center; gap: 1px; }
         .wall-bid-container { flex: 1; display: flex; justify-content: flex-end; background: rgba(13, 17, 23, 0.5); height: 100%; }
         .wall-ask-container { flex: 1; display: flex; justify-content: flex-start; background: rgba(13, 17, 23, 0.5); height: 100%; }
-        
         .wall-bid-bar { height: 100%; background: #2ea043; border-top-left-radius: 1px; border-bottom-left-radius: 1px; min-width: 1px; opacity: 0.9; }
         .wall-ask-bar { height: 100%; background: #da3633; border-top-right-radius: 1px; border-bottom-right-radius: 1px; min-width: 1px; opacity: 0.9; }
+        
+        .ofi-track { height: 6px; width: 100%; background: #1f2937; border-radius: 3px; overflow: hidden; display: flex; position: relative; }
+        .ofi-bar { height: 100%; position: absolute; transition: all 0.3s; }
+        .ofi-center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: #6b7280; z-index: 10; opacity: 0.5; }
 
-        /* 籌碼食人魚雷達樣式 */
-        .piranha-track { height: 4px; width: 100%; background: #161b22; border-radius: 2px; overflow: hidden; display: flex; margin-top: 2px; }
+        .piranha-track { height: 4px; width: 100%; background: #161b22; border-radius: 2px; overflow: hidden; display: flex; margin-top: 3px; }
         .piranha-titan { background: #f85149; height: 100%; transition: width 0.5s; box-shadow: 0 0 5px rgba(248, 81, 73, 0.5); }
         .piranha-retail { background: #3fb950; height: 100%; transition: width 0.5s; }
-
-        /* 設定彈窗 */
         #settings-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; }
+        
+        #dragon-list > div { transition: all 0.5s ease; }
     </style>
 </head>
-<body class="h-screen flex flex-col p-3 gap-3 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-
-    <!-- [設定彈窗] -->
+<body class="h-screen flex flex-col p-4 gap-4">
     <div id="settings-modal">
         <div class="cyber-section w-96 p-6 space-y-4 shadow-2xl border-blue-500/50 bg-[#0d1117]">
             <h2 class="text-xl font-bold text-blue-400 border-b border-slate-800 pb-2">系統連線設定</h2>
             <div class="space-y-2">
                 <label class="text-xs text-slate-500 uppercase font-bold">Bridge 伺服器網址 (WSS)</label>
-                <input type="text" id="bridge-url-input" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white font-mono focus:border-blue-500 outline-none" placeholder="wss://superterrestrial-sadie-exteriorly.ngrok-free.dev/ws">
-                <div class="text-[10px] text-slate-500 space-y-1">
-                    <p>※ 遠端 Ngrok: <code class="text-blue-400 select-all">wss://superterrestrial-sadie-exteriorly.ngrok-free.dev/ws</code></p>
-                    <p>※ 本機測試: <code class="text-green-400 select-all">ws://127.0.0.1:8000/ws</code></p>
-                </div>
+                <input type="text" id="bridge-url-input" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white font-mono focus:border-blue-500 outline-none" value="ws://127.0.0.1:8000/ws">
             </div>
             <div class="flex gap-2 pt-2">
                 <button onclick="saveSettings()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded transition-all">儲存並連線</button>
@@ -97,366 +82,442 @@
         </div>
     </div>
 
-    <!-- [1] 頂部損益總覽 -->
-    <div class="h-24 flex gap-3 flex-shrink-0">
+    <!-- Top PnL -->
+    <div class="h-28 flex gap-4 flex-shrink-0">
         <div class="cyber-section flex-1 flex flex-row items-center px-8 justify-between bg-gradient-to-r from-[#0d1117] via-[#161b22] to-[#0d1117] shadow-lg border-l-4 border-l-blue-500">
-            
-            <!-- 左：已實現 -->
             <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> 今日已實現損益
-                </div>
-                <div id="stat-realized-pnl" class="text-3xl font-mono font-bold text-slate-200 tracking-tight">$0</div>
+                <div class="flex items-center gap-2 text-slate-500 text-sm font-bold uppercase tracking-wider"><i data-lucide="check-circle" class="w-5 h-5"></i> 今日已實現損益</div>
+                <div id="stat-realized-pnl" class="text-4xl font-mono font-bold text-slate-200 tracking-tight">$0</div>
             </div>
-
-            <!-- 中：即時未實現 -->
             <div class="flex flex-col items-center justify-center">
-                <div class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mb-1 bg-slate-900/50 px-3 py-0.5 rounded-full border border-slate-800">
-                    即時帳面損益 (Unrealized)
-                </div>
-                <div id="stat-unrealized-pnl" class="text-5xl font-mono font-black neon-text-red animate-pulse-glow">+$0</div>
+                <div class="text-xs text-slate-500 font-bold uppercase tracking-[0.2em] mb-1 bg-slate-900/50 px-4 py-1 rounded-full border border-slate-800">即時帳面損益 (Unrealized)</div>
+                <div id="stat-unrealized-pnl" class="text-6xl font-mono font-black neon-text-red animate-pulse-glow">+$0</div>
             </div>
-
-            <!-- 右：狀態摘要 -->
-            <div class="flex flex-col items-end gap-2">
-                <div class="flex gap-6 text-sm font-mono text-slate-400 bg-slate-900/50 px-3 py-1.5 rounded border border-slate-800">
+            <div class="flex flex-col items-end gap-3">
+                <div class="flex gap-6 text-base font-mono text-slate-400 bg-slate-900/50 px-4 py-2 rounded border border-slate-800">
                     <span>成交: <span id="stat-count" class="text-white font-bold">0</span></span>
                     <span class="text-slate-600">|</span>
-                    <span>勝率: <span id="stat-win" class="text-blue-400 font-bold">0%</span></span>
+                    <span>勝率: <span id="stat-win" class="text-blue-400 font-bold">--%</span></span>
                 </div>
-                <div class="text-[10px] text-slate-600 font-mono">SYSTEM READY</div>
+                <div class="text-xs text-slate-600 font-mono">SYSTEM READY</div>
             </div>
-
-            <!-- 設定按鈕 -->
-            <button onclick="toggleSettings(true)" class="absolute top-3 right-3 text-slate-600 hover:text-blue-400 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-            </button>
+            <button onclick="toggleSettings(true)" class="absolute top-3 right-3 text-slate-600 hover:text-blue-400 transition-colors"><i data-lucide="settings" class="w-5 h-5"></i></button>
         </div>
     </div>
 
-    <!-- [2] 中間大盤區 -->
-    <div class="h-14 flex gap-3 flex-shrink-0">
-        <div class="cyber-section flex-1 flex flex-row items-center px-6 gap-10 bg-[#0d1117]">
-            <div class="flex items-center gap-3">
-                <span class="text-xs font-bold text-blue-400 bg-blue-900/20 px-2 py-1 rounded">台指期 TXF</span>
-                <span id="mkt-txf-p" class="font-mono text-xl font-bold text-white">---</span>
-                <span id="mkt-txf-c" class="text-xs font-mono text-slate-500">0.00%</span>
-            </div>
-            <div class="h-8 w-px bg-slate-800"></div>
-            <div class="flex items-center gap-3">
-                <span class="text-xs font-bold text-slate-400">加權 TSE</span>
-                <span id="mkt-tse-p" class="font-mono text-lg text-slate-300">---</span>
-            </div>
-            <div class="h-8 w-px bg-slate-800"></div>
-            <div class="flex items-center gap-3">
-                <span class="text-xs font-bold text-slate-400">櫃買 OTC</span>
-                <span id="mkt-otc-p" class="font-mono text-lg text-slate-300">---</span>
-            </div>
-            <div class="ml-auto flex items-center gap-2 bg-slate-900 px-4 py-1.5 rounded-full border border-slate-800 shadow-inner">
-                <div class="flex gap-1">
-                    <div class="w-1 h-3 bg-red-500 rounded-full"></div>
-                    <div class="w-1 h-3 bg-red-500 rounded-full"></div>
-                    <div class="w-1 h-3 bg-slate-700 rounded-full"></div>
+    <!-- Market Overview -->
+    <div class="h-16 flex gap-4 flex-shrink-0">
+        <div class="cyber-section flex-1 flex flex-row items-center px-8 gap-8 bg-[#0d1117]">
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-blue-400 bg-blue-900/20 px-3 py-1.5 rounded">台指期 TXF</span>
+                <span id="mkt-txf-p" class="font-mono text-2xl font-bold text-white">---</span>
+                <span id="mkt-txf-c" class="text-sm font-mono text-slate-500">0.00%</span>
+                <div class="flex flex-col justify-center gap-1 ml-4 bg-slate-900/90 px-4 py-2 rounded-md border border-slate-700/60 shadow-inner min-w-[150px]" id="hmm-container">
+                    <div class="flex justify-between items-center">
+                         <span class="text-[10px] text-slate-500 uppercase font-bold tracking-tight">AI 多空比</span>
+                         <span id="mkt-txf-hmm" class="text-xs font-mono font-bold text-slate-400">---</span>
+                    </div>
+                    <div class="flex items-center gap-2 w-full h-3">
+                        <div class="flex-1 h-2 bg-slate-800 rounded-full relative overflow-hidden flex items-center shadow-inner border border-slate-700/30">
+                            <div class="absolute left-1/2 w-[1px] h-full bg-slate-500 z-10 opacity-50"></div>
+                            <div id="hmm-bar" class="h-full transition-all duration-500 ease-out absolute" style="width: 0%; left: 50%;"></div>
+                        </div>
+                        <span id="hmm-status-text" class="text-[10px] font-bold text-slate-500 w-12 text-right">等待</span>
+                    </div>
                 </div>
-                <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider ml-1">AI 信心: <span class="text-red-400 font-bold">偏多</span></span>
+            </div>
+            <div class="h-10 w-px bg-slate-800"></div>
+            <div class="flex items-center gap-6 text-sm font-mono">
+                <div class="flex items-center gap-2" title="上漲家數"><i data-lucide="trending-up" class="w-4 h-4 text-red-500"></i><span class="text-red-400 font-bold" id="mkt-up-count">---</span></div>
+                <div class="flex items-center gap-2" title="下跌家數"><i data-lucide="trending-down" class="w-4 h-4 text-green-500"></i><span class="text-green-400 font-bold" id="mkt-down-count">---</span></div>
+            </div>
+            <div class="h-10 w-px bg-slate-800"></div>
+            <div class="ml-auto flex items-center gap-4 bg-slate-900 px-5 py-2 rounded-full border border-slate-800 shadow-inner">
+                <div class="flex flex-col items-end">
+                     <span class="text-[10px] text-slate-500 uppercase">AI 多空能量</span>
+                     <span class="text-sm font-mono font-bold text-slate-300" id="mkt-pressure-val">Ratio: 1.00</span>
+                </div>
+                <div class="flex gap-1.5" id="mkt-pressure-lights">
+                    <div class="w-2 h-5 bg-slate-700 rounded-full transition-colors"></div>
+                    <div class="w-2 h-5 bg-slate-700 rounded-full transition-colors"></div>
+                    <div class="w-2 h-5 bg-slate-700 rounded-full transition-colors"></div>
+                </div>
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider ml-1">信心: <span id="mkt-pressure-text" class="text-slate-500 font-bold">等待</span></span>
             </div>
         </div>
     </div>
 
-    <!-- [3] 互動核心區 (Grid Layout) -->
-    <div class="h-1/3 min-h-[280px] flex gap-3">
-        
-        <!-- 左: 委託監控 (25%) -->
+    <!-- Main Content -->
+    <div class="h-1/3 min-h-[300px] flex gap-4">
+        <!-- Orders -->
         <div class="cyber-section w-1/4 shadow-lg border-l-4 border-l-purple-500 flex flex-col">
-            <div class="section-title">
-                <span class="flex items-center gap-2 text-purple-400"><i data-lucide="list-ordered" class="w-3 h-3"></i> 委託監控</span>
-                <select id="quick-order-select" class="cyber-select h-5 text-[10px]">
-                    <option>快速選取...</option>
-                </select>
-            </div>
+            <div class="section-title"><span class="flex items-center gap-2 text-purple-400"><i data-lucide="list-ordered" class="w-4 h-4"></i> 策略訊號與委託</span><select id="quick-order-select" class="cyber-select h-6 text-xs"><option>快速選取...</option></select></div>
             <div class="flex-1 overflow-y-auto custom-scroll p-0 relative">
-                <table class="w-full text-xs font-mono">
-                    <thead class="bg-[#161b22] text-slate-500 sticky top-0 z-10">
-                        <tr><th class="text-left py-2 px-3 font-normal">時間</th><th class="text-left py-2 px-3 font-normal">代碼</th><th class="text-right py-2 px-3 font-normal">狀態</th></tr>
-                    </thead>
-                    <tbody id="order-tbody" class="text-slate-300 divide-y divide-slate-800/50">
-                        <tr><td colspan="3" class="text-center py-10 text-slate-600 italic text-[11px]">等待委託回報...</td></tr>
-                    </tbody>
+                <table class="w-full text-sm font-mono">
+                    <thead class="bg-[#161b22] text-slate-500 sticky top-0 z-10"><tr><th class="text-left py-2 px-3 font-normal">時間</th><th class="text-left py-2 px-3 font-normal">代碼</th><th class="text-right py-2 px-3 font-normal">訊號</th></tr></thead>
+                    <tbody id="order-tbody" class="text-slate-300 divide-y divide-slate-800/50"><tr><td colspan="3" class="text-center py-10 text-slate-600 italic text-sm">等待 AI 策略決策...</td></tr></tbody>
                 </table>
             </div>
         </div>
-
-        <!-- 中: 戰術儀表板 (25%) - 垂直堆疊 -->
-        <div class="w-1/4 flex flex-col gap-3">
-            
-            <!-- 族群熱度雷達 -->
-            <div class="cyber-section h-[85px] border-l-4 border-l-orange-500 flex-shrink-0">
-                <div class="section-title py-1">
-                    <span class="flex items-center gap-2 text-orange-400"><i data-lucide="flame" class="w-3 h-3"></i> 族群熱度 (Sector Heat)</span>
-                </div>
-                <div class="flex-1 p-2 flex flex-col justify-center gap-2 bg-[#0b0e13]">
-                    <!-- 半導體 -->
-                    <div class="flex items-center gap-2 text-[10px]">
-                        <span class="w-10 text-slate-400 text-right">半導體</span>
-                        <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div class="h-full bg-red-500 heat-bar-fill shadow-[0_0_8px_#ef4444]" style="width: 85%"></div>
-                        </div>
-                        <span class="text-red-400 font-mono w-8 text-right">+2.4%</span>
-                    </div>
-                    <!-- AI 組裝 -->
-                    <div class="flex items-center gap-2 text-[10px]">
-                        <span class="w-10 text-slate-400 text-right">AI組裝</span>
-                        <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div class="h-full bg-orange-500 heat-bar-fill shadow-[0_0_8px_#f97316]" style="width: 65%"></div>
-                        </div>
-                        <span class="text-orange-400 font-mono w-8 text-right">+1.1%</span>
-                    </div>
+        <!-- Stats -->
+        <div class="w-1/4 flex flex-col gap-4">
+            <div class="cyber-section h-[100px] border-l-4 border-l-orange-500 flex-shrink-0">
+                <div class="section-title py-2"><span class="flex items-center gap-2 text-orange-400"><i data-lucide="flame" class="w-4 h-4"></i> 族群熱度</span></div>
+                <div class="flex-1 p-3 flex flex-col justify-center gap-2 bg-[#0b0e13]">
+                    <div class="flex items-center gap-2 text-xs"><span class="w-12 text-slate-400 text-right">半導體</span><div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-red-500 heat-bar-fill" style="width: 85%"></div></div><span class="text-red-400 font-mono w-10 text-right">+2.4%</span></div>
+                    <div class="flex items-center gap-2 text-xs"><span class="w-12 text-slate-400 text-right">AI組裝</span><div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-orange-500 heat-bar-fill" style="width: 65%"></div></div><span class="text-orange-400 font-mono w-10 text-right">+1.1%</span></div>
                 </div>
             </div>
-
-            <!-- 宏觀儀表 (Macro) - 已更新為 Nasdaq Futures -->
-            <div class="cyber-section h-[65px] border-l-4 border-l-cyan-500 flex-shrink-0">
-                <div class="section-title py-1">
-                    <span class="flex items-center gap-2 text-cyan-400"><i data-lucide="globe" class="w-3 h-3"></i> 宏觀儀表 (Macro)</span>
-                </div>
+            <div class="cyber-section h-[80px] border-l-4 border-l-cyan-500 flex-shrink-0">
+                <div class="section-title py-2"><span class="flex items-center gap-2 text-cyan-400"><i data-lucide="globe" class="w-4 h-4"></i> 宏觀儀表</span></div>
                 <div class="flex-1 flex items-center justify-around px-2 bg-[#0b0e13]">
-                    <div class="text-center">
-                        <div class="text-[9px] text-slate-500 uppercase">VIX</div>
-                        <div class="text-sm font-mono text-green-400 font-bold">13.2</div>
-                    </div>
-                    <div class="w-px h-6 bg-slate-800"></div>
-                    <div class="text-center">
-                        <div class="text-[9px] text-slate-500 uppercase">USD/TWD</div>
-                        <div class="text-sm font-mono text-slate-300 font-bold">31.4</div>
-                    </div>
-                    <div class="w-px h-6 bg-slate-800"></div>
-                    <!-- 更新: US10Y -> Nasdaq Futures -->
-                    <div class="text-center">
-                        <div class="text-[9px] text-slate-500 uppercase">那指期貨</div>
-                        <div class="text-sm font-mono text-blue-400 font-bold" id="macro-nq">18,245</div>
-                    </div>
+                    <div class="text-center"><div class="text-[10px] text-slate-500 uppercase">VIX</div><div class="text-lg font-mono text-green-400 font-bold">13.2</div></div>
+                    <div class="w-px h-8 bg-slate-800"></div>
+                    <div class="text-center"><div class="text-[10px] text-slate-500 uppercase">那指期</div><div class="text-lg font-mono text-blue-400 font-bold" id="macro-nq">18,245</div></div>
                 </div>
             </div>
-
-            <!-- 持倉股 -->
             <div class="cyber-section flex-1 border-l-4 border-l-pink-500 min-h-0 flex flex-col">
-                <div class="section-title py-1">
-                    <span class="flex items-center gap-2 text-pink-400"><i data-lucide="briefcase" class="w-3 h-3"></i> 持倉部隊 (Positions)</span>
-                </div>
-                <div class="flex-1 overflow-y-auto custom-scroll p-2 space-y-2 bg-[#0b0e13]" id="positions-list">
-                    <!-- JS 生成 -->
-                </div>
+                <div class="section-title py-2"><span class="flex items-center gap-2 text-pink-400"><i data-lucide="briefcase" class="w-4 h-4"></i> 持倉部隊</span></div>
+                <div class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 bg-[#0b0e13]" id="positions-list"></div>
             </div>
         </div>
-        
-        <!-- 右: AI 軍師 (50%) -->
+        <!-- AI Chat -->
         <div class="cyber-section flex-1 flex flex-col border-blue-900/30 shadow-lg border-l-4 border-l-blue-600">
-            <div class="section-title bg-blue-900/10">
-                <span class="text-blue-400 flex items-center gap-2 font-bold"><i data-lucide="bot" class="w-4 h-4"></i> AI 指導神軍師 (Gemini)</span>
-                <select id="ai-target-select" class="cyber-select h-6 text-[11px] border-blue-900/50">
-                    <option value="ALL">全域戰局分析</option>
-                </select>
-            </div>
+            <div class="section-title bg-blue-900/10"><span class="text-blue-400 flex items-center gap-2 font-bold"><i data-lucide="bot" class="w-5 h-5"></i> AI 指導神軍師 & 日誌</span><select id="ai-target-select" class="cyber-select h-7 text-xs border-blue-900/50"><option value="ALL">全域戰局分析</option></select></div>
             <div id="ai-chat-box" class="flex-1 overflow-y-auto custom-scroll p-4 space-y-4 bg-[#0b0e13]">
-                <div class="flex gap-3">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold text-white shadow-lg shadow-blue-900/30">軍師</div>
-                    <div class="bg-[#1c2128] border border-slate-700/50 p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl text-slate-300 text-sm leading-relaxed max-w-[90%] shadow-md">
-                        指揮官您好，<span class="text-yellow-400 font-bold">Best5 真實能量牆</span> 已接入。右側長條圖即時顯示 <span class="text-red-400">Best Ask (賣壓)</span> 與 <span class="text-green-400">Best Bid (買盤)</span> 對決。注意「籌碼食人魚」雷達若顯示紅色佔比過高，代表主力(Titan)正在掌控籌碼。
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold text-white shadow-lg shadow-blue-900/30">軍師</div>
+                    <div class="bg-[#1c2128] border border-slate-700/50 p-4 rounded-tr-xl rounded-br-xl rounded-bl-xl text-slate-300 text-sm leading-relaxed max-w-[90%] shadow-md">
+                        指揮官您好，<span class="text-yellow-400 font-bold">戰術終端 v8.15</span> 已切換至<span class="text-white font-bold">「大字體模式」</span>。矩陣依照<span class="text-red-400">「Tick 頻率」</span>排序，OFI 指標已放大顯示。
                     </div>
                 </div>
             </div>
-            <div class="p-3 border-t border-slate-800 flex gap-2 bg-[#161b22]">
+            <div class="p-4 border-t border-slate-800 flex gap-3 bg-[#161b22]">
                 <input type="text" id="ai-input" placeholder="請輸入您的指令..." class="flex-1 bg-[#0d1117] border border-slate-700 rounded-md px-4 py-2 text-sm focus:border-blue-500 outline-none text-white placeholder-slate-600 transition-all">
-                <button onclick="askAI()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-md text-sm font-bold transition-all shadow-lg shadow-blue-900/20">發送</button>
+                <button onclick="askAI()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 rounded-md text-sm font-bold transition-all shadow-lg shadow-blue-900/20">發送</button>
             </div>
         </div>
     </div>
 
-    <!-- [4] 高頻監控牆 (OFI & Real Liquidity Wall) -->
-    <div class="flex-1 cyber-section flex flex-col shadow-2xl border-l-4 border-l-red-500 min-h-[250px]">
+    <!-- Dragon Matrix -->
+    <div class="flex-1 cyber-section flex flex-col shadow-2xl border-l-4 border-l-red-500 min-h-[300px]">
         <div class="section-title">
-            <span class="flex items-center gap-2 text-slate-200 font-bold"><i data-lucide="zap" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i> 十龍高頻監控矩陣</span>
-            <div class="flex gap-6 text-[10px] font-mono opacity-70">
-                <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_#f85149]"></div> 主力(Titan)</span>
-                <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_5px_#3fb950]"></div> 散戶(Retail)</span>
-                <span class="flex items-center gap-1.5 text-slate-500">|</span>
-                <span class="flex items-center gap-1.5"><div class="w-3 h-0.5 border border-slate-500 border-dashed"></div> 均價 (VWAP)</span>
+            <span class="flex items-center gap-2 text-slate-200 font-bold text-lg"><i data-lucide="zap" class="w-5 h-5 text-yellow-500 fill-yellow-500"></i> 十龍高頻監控矩陣 (Sorted by Tick Frequency)</span>
+            <div class="flex gap-8 text-xs font-mono opacity-70">
+                <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_5px_#f85149]"></div> OFI(多)</span>
+                <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#3fb950]"></div> OFI(空)</span>
+                <span class="flex items-center gap-2 text-slate-500">|</span>
+                <span class="flex items-center gap-2"><div class="w-4 h-0.5 border border-slate-500 border-dashed"></div> 均價 (VWAP)</span>
             </div>
         </div>
+        <!-- [v8.15] 動態矩陣容器 -->
         <div id="dragon-list" class="flex-1 overflow-y-auto custom-scroll bg-[#0b0e13]">
-            <!-- JS 生成 -->
+             <div id="waiting-msg" class="text-center py-12 text-slate-500 italic text-sm">等待行情快照以建立矩陣...</div>
         </div>
     </div>
 
-    <!-- [5] 底部狀態列 -->
-    <div class="h-7 flex items-center justify-between px-4 bg-[#161b22] border-t border-slate-800 text-[10px] font-mono text-slate-500 flex-shrink-0">
-        <div class="flex gap-6">
-            <div id="footer-ws" class="text-red-500 flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> 
-                BRIDGE: 斷線 (模擬模式)
-            </div>
-            <span><i data-lucide="server" class="w-3 h-3 inline"></i> CORE: v7.3 (Ngrok Direct)</span>
+    <!-- Footer -->
+    <div class="h-8 flex items-center justify-between px-6 bg-[#161b22] border-t border-slate-800 text-xs font-mono text-slate-500 flex-shrink-0">
+        <div class="flex gap-8">
+            <div id="footer-ws" class="text-red-500 flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div> BRIDGE: 斷線</div>
+            <span><i data-lucide="server" class="w-4 h-4 inline"></i> CORE: v8.4 (Data Flow Fixed)</span>
         </div>
-        <div class="flex gap-6">
-            <div id="footer-latency" class="flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3"></i> 延遲: --ms</div>
-            <div id="footer-time" class="flex items-center gap-1 text-slate-400 font-bold"><i data-lucide="clock" class="w-3 h-3 text-blue-500"></i> --:--:--</div>
+        <div class="flex gap-8">
+            <div id="footer-latency" class="flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> 延遲: --ms</div>
+            <div id="footer-time" class="flex items-center gap-2 text-slate-400 font-bold"><i data-lucide="clock" class="w-4 h-4 text-blue-500"></i> --:--:--</div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-
-        // --- 核心變數 ---
-        const SYMBOLS = ['2330', '2454', '2317', '3034', '2303', '2603', '2609', '3231', '6669', '3443'];
-        const stockData = {};
+        
+        const stockData = {}; 
         let ws = null;
-        // [v7.3 更新] 預設使用您的 Ngrok 固定網域
-        let wsUrl = localStorage.getItem('canglong_ws_url') || 'wss://superterrestrial-sadie-exteriorly.ngrok-free.dev/ws';
+        let wsUrl = localStorage.getItem('canglong_ws_url') || 'ws://127.0.0.1:8000/ws';
+        let POSITIONS = []; 
+        let isRealDataReceiving = false; 
 
-        // 持倉模擬數據
-        const POSITIONS = [
-            { sym: '2330', name: '台積電', qty: 2000, cost: 980, curr: 1020, side: 'Buy' },
-            { sym: '2454', name: '聯發科', qty: 1000, cost: 1100, curr: 1150, side: 'Buy' },
-            { sym: '2603', name: '長榮', qty: 5000, cost: 165, curr: 162, side: 'Buy' }
-        ];
+        // [v8.14] Snapshot Mirroring Set
+        let currentSnapshotSymbols = new Set();
 
-        function getStockName(s) {
-            const m = {'2330':'台積電','2454':'聯發科','2317':'鴻海','3034':'聯詠','2303':'聯電','2603':'長榮','2609':'陽明','3231':'緯創','6669':'緯穎','3443':'創意'};
-            return m[s] || '個股';
-        }
-
-        // --- UI 初始化 ---
         const dragonList = document.getElementById('dragon-list');
         const quickSelect = document.getElementById('quick-order-select');
         const aiSelect = document.getElementById('ai-target-select');
         
         if(wsUrl) document.getElementById('bridge-url-input').value = wsUrl;
 
-        SYMBOLS.forEach(sym => {
-            const name = getStockName(sym);
-            stockData[sym] = { 
-                symbol: sym, 
-                name, 
-                price: 0, 
-                avg: 0, 
-                change: 0, 
-                ofi: 0, 
-                monologue: "等待訊號...", 
-                history: [], 
-                avgHistory: [],
-                piranha: { titan: 50, retail: 50 } // 初始籌碼數據
-            };
-            
-            quickSelect.add(new Option(`${sym} ${name}`, sym));
-            aiSelect.add(new Option(`${sym} ${name}`, sym));
+        function safeFixed(val, digits = 2) {
+            if (val === undefined || val === null || val === '') return '0.' + '0'.repeat(digits);
+            const num = Number(val);
+            if (isNaN(num) || !isFinite(num)) return '0.' + '0'.repeat(digits);
+            return num.toFixed(digits);
+        }
 
-            const row = document.createElement('div');
-            row.className = 'dragon-row';
-            row.innerHTML = `
-                <div class="w-24 flex-shrink-0">
-                    <div class="text-[9px] font-mono text-blue-500 font-black tracking-tight">${sym}</div>
-                    <div class="text-[14px] font-bold text-slate-200">${name}</div>
-                </div>
-                <!-- 資訊欄：包含 Piranha 籌碼雷達 -->
-                <div class="w-64 flex-shrink-0 border-l border-slate-800 pl-4 flex flex-col justify-center relative">
-                    <div class="flex justify-between items-center mb-0.5">
-                        <div class="text-[9px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
-                            PIRANHA RADAR
-                        </div>
-                        <div id="ofi-${sym}" class="text-[9px] font-mono font-bold px-1.5 rounded border border-transparent transition-all">OFI: 0.0</div>
-                    </div>
-                    <!-- 籌碼食人魚雷達條 -->
-                    <div class="flex flex-col gap-0.5">
-                         <div class="piranha-track" id="piranha-bar-${sym}">
-                             <div class="piranha-titan" style="width: 50%"></div>
-                             <div class="piranha-retail" style="width: 50%"></div>
-                         </div>
-                         <div class="flex justify-between text-[8px] font-mono text-slate-500">
-                             <span id="piranha-val-titan-${sym}" class="text-red-500">50%</span>
-                             <span id="piranha-val-retail-${sym}" class="text-green-500">50%</span>
-                         </div>
-                    </div>
-                </div>
-                <!-- 價格 -->
-                <div class="w-20 flex-shrink-0 text-right border-l border-slate-800 px-2 flex flex-col justify-center">
-                    <div id="price-${sym}" class="text-xl font-mono font-bold text-slate-500">---</div>
-                </div>
-                <!-- 漲跌幅 -->
-                <div class="w-16 flex-shrink-0 flex items-center justify-end px-2">
-                    <div id="change-${sym}" class="text-xs font-bold text-slate-600 bg-slate-900 px-2 py-0.5 rounded">0%</div>
-                </div>
-                <!-- [更新] 真實五檔能量牆 (Real L2 Wall) - Bidirectional Bar Chart -->
-                <div class="w-[60px] h-full flex flex-col justify-center border-l border-slate-800/50 px-1">
-                    <div id="wall-${sym}" class="wall-container">
-                        <!-- JS 動態生成 5 條 Bid/Ask 雙向 Bar -->
-                    </div>
-                </div>
-                <!-- 線圖 -->
-                <div class="flex-1 h-10 relative px-2 py-1" id="chart-${sym}"><svg id="svg-${sym}" width="100%" height="100%"></svg></div>
-            `;
-            dragonList.appendChild(row);
-            
-            // 預先填充能量牆結構 (5層) - 使用新的雙向結構
-            const wallEl = document.getElementById(`wall-${sym}`);
-            for(let i=0; i<5; i++) {
-                wallEl.innerHTML += `
-                    <div class="wall-row">
-                        <div class="wall-bid-container">
-                            <div class="wall-bid-bar" style="width: 0%" id="wall-bid-${sym}-${i}"></div>
-                        </div>
-                        <div class="wall-ask-container">
-                            <div class="wall-ask-bar" style="width: 0%" id="wall-ask-${sym}-${i}"></div>
-                        </div>
-                    </div>
-                `;
+        function getStockName(s) {
+            if(!s) return '未知';
+            const coreSym = s.split('.')[0];
+            const m = {'2330':'台積電','2454':'聯發科','2317':'鴻海','3034':'聯詠','2303':'聯電','2603':'長榮','2609':'陽明','3231':'緯創','6669':'緯穎','3443':'創意'};
+            return stockData[coreSym]?.name || m[coreSym] || coreSym; 
+        }
+
+        function getMultiplier(sym) {
+             if (!sym) return 1000;
+             const s = sym.split('.')[0];
+             if (s === 'TXF' || s === 'TX01') return 200;
+             return 1000;
+        }
+
+        function updateLocalUnrealizedPnL() {
+            let totalUnrealized = 0;
+            let hasActivePositions = false;
+            POSITIONS.forEach(p => {
+                hasActivePositions = true;
+                let currentPrice = p.cost; 
+                const sData = stockData[p.sym];
+                if (sData && sData.price > 0) currentPrice = sData.price;
+                const mult = getMultiplier(p.sym);
+                let diff = (p.side === 'Buy') ? (currentPrice - p.cost) : (p.cost - currentPrice);
+                totalUnrealized += diff * p.qty * mult;
+            });
+            const unPnL = document.getElementById('stat-unrealized-pnl');
+            if (hasActivePositions && unPnL) {
+                 const val = Math.round(totalUnrealized);
+                 unPnL.innerText = (val >= 0 ? '+$' : '-$') + Math.abs(val).toLocaleString();
+                 unPnL.className = `text-6xl font-mono font-black ${val >= 0 ? 'neon-text-red' : 'neon-text-green'} animate-pulse-glow`;
+            } else if (isRealDataReceiving && unPnL) {
+                 unPnL.innerText = '+$0';
+                 unPnL.className = 'text-6xl font-mono font-black text-slate-500';
             }
-        });
+        }
 
-        // 渲染持倉列表
+        function updateStockDataModel(sym, name, price, change, totalVol, depth, piranha, newTickCount = 0, tradeVol = 0, tradeSide = 0) {
+            if (!sym) return;
+            sym = sym.split('.')[0];
+            
+            if (!stockData[sym]) {
+                stockData[sym] = { 
+                    symbol: sym, 
+                    name: name || sym, 
+                    price: price || 0, 
+                    change: change || 0,
+                    totalVol: totalVol || 0,
+                    ofi: 0, 
+                    tickCount: 0, 
+                    depth: depth || null,
+                    piranha: piranha || { titan: 50, retail: 50 },
+                    avg: 0, 
+                    history: [], avgHistory: [] 
+                };
+                quickSelect.add(new Option(`${sym} ${name||sym}`, sym));
+                aiSelect.add(new Option(`${sym} ${name||sym}`, sym));
+            } else {
+                const d = stockData[sym];
+                if(name) d.name = name;
+                if(price !== undefined && price !== null) d.price = Number(price);
+                if(change !== undefined) d.change = Number(change);
+                if(totalVol !== undefined && totalVol !== null) d.totalVol = Number(totalVol);
+                if(depth) d.depth = depth;
+                if(piranha) d.piranha = piranha;
+                
+                if (newTickCount > 0) d.tickCount += newTickCount;
+
+                if (tradeVol > 0 && tradeSide !== 0) {
+                    const sign = tradeSide > 0 ? 1 : -1;
+                    d.ofi += tradeVol * sign;
+                }
+            }
+        }
+
+        // [v8.15] 建立行 DOM (大字體版)
+        function createRowDOM(d) {
+            const row = document.createElement('div');
+            row.className = 'dragon-row animate-fade-in'; 
+            row.id = `row-${d.symbol}`;
+            row.setAttribute('data-sym', d.symbol);
+            
+            row.innerHTML = `
+                <div class="w-28 flex-shrink-0">
+                    <div class="text-xs font-mono text-blue-500 font-black tracking-tight">${d.symbol}</div>
+                    <div class="stock-name-div text-lg font-bold text-slate-200 mt-0.5">${d.name}</div>
+                    <div class="flex justify-between items-center mt-1">
+                        <div class="text-xs font-mono text-slate-500">Tick: <span id="tick-count-${d.symbol}" class="text-orange-400 font-bold text-sm">${d.tickCount || 0}</span></div>
+                    </div>
+                </div>
+                
+                <!-- OFI 與 Piranha 區塊 (加寬) -->
+                <div class="w-72 flex-shrink-0 border-l border-slate-800 pl-5 flex flex-col justify-center gap-2">
+                    <!-- Piranha (主力籌碼) -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-[11px] font-mono text-slate-500 uppercase tracking-wider">
+                            <span>Piranha Radar</span>
+                            <span id="piranha-val-titan-${d.symbol}" class="text-red-500 font-bold">T:${safeFixed(d.piranha?.titan||50,0)}%</span>
+                        </div>
+                        <div class="piranha-track" id="piranha-bar-${d.symbol}">
+                            <div class="piranha-titan" style="width: ${d.piranha ? d.piranha.titan : 50}%"></div>
+                            <div class="piranha-retail" style="width: ${d.piranha ? d.piranha.retail : 50}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- OFI (訂單流不平衡) -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-[11px] font-mono text-slate-500 uppercase tracking-wider">
+                            <span>Order Flow Imbalance</span>
+                            <span id="ofi-val-${d.symbol}" class="text-slate-400 font-bold text-xs">0</span>
+                        </div>
+                        <div class="ofi-track">
+                            <div class="ofi-center-line"></div>
+                            <div id="ofi-bar-${d.symbol}" class="ofi-bar bg-slate-600" style="left: 50%; width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-32 flex-shrink-0 text-right border-l border-slate-800 px-3 flex flex-col justify-center">
+                    <div id="price-${d.symbol}" class="text-3xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}">${safeFixed(d.price, 1)}</div>
+                </div>
+                <div class="w-20 flex-shrink-0 flex items-center justify-end px-3">
+                    <div id="change-${d.symbol}" class="text-sm font-bold px-2 py-1 rounded ${d.change >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}">${(d.change > 0 ? '+' : '') + safeFixed(d.change * 100, 2)}%</div>
+                </div>
+                <div class="w-[60px] h-full flex flex-col justify-center border-l border-slate-800/50 px-2">
+                    <div id="wall-${d.symbol}" class="wall-container"></div>
+                </div>
+                <div class="flex-1 h-14 relative px-3 py-1" id="chart-${d.symbol}">
+                    <svg id="svg-${d.symbol}" width="100%" height="100%"></svg>
+                </div>`;
+            
+            const wallEl = row.querySelector(`#wall-${d.symbol}`);
+            for(let i=0; i<5; i++) { 
+                wallEl.innerHTML += `<div class="wall-row"><div class="wall-bid-container"><div class="wall-bid-bar" style="width:0%" id="wall-bid-${d.symbol}-${i}"></div></div><div class="wall-ask-container"><div class="wall-ask-bar" style="width:0%" id="wall-ask-${d.symbol}-${i}"></div></div></div>`; 
+            }
+            return row;
+        }
+
+        function renderDragonMatrix() {
+            const activeStocks = [];
+            currentSnapshotSymbols.forEach(sym => {
+                if (stockData[sym]) {
+                    activeStocks.push(stockData[sym]);
+                }
+            });
+
+            if (activeStocks.length === 0) return;
+            const waitMsg = document.getElementById('waiting-msg');
+            if (waitMsg) waitMsg.remove();
+
+            activeStocks.sort((a, b) => {
+                const tickDiff = (b.tickCount || 0) - (a.tickCount || 0);
+                if (tickDiff !== 0) return tickDiff;
+                return (b.totalVol || 0) - (a.totalVol || 0);
+            });
+            
+            const top10 = activeStocks.slice(0, 10);
+            const top10Syms = new Set(top10.map(s => s.symbol));
+            
+            const container = document.getElementById('dragon-list');
+            
+            Array.from(container.children).forEach(child => {
+                const sym = child.getAttribute('data-sym');
+                if (sym && !top10Syms.has(sym)) child.remove();
+            });
+
+            top10.forEach((d, index) => {
+                let row = document.getElementById(`row-${d.symbol}`);
+                if (!row) {
+                    row = createRowDOM(d);
+                    container.appendChild(row);
+                }
+                const currentChild = container.children[index];
+                if (currentChild !== row) {
+                    container.insertBefore(row, currentChild || null);
+                }
+                updateRowView(d.symbol);
+            });
+        }
+
+        function updateRowView(sym) {
+            const d = stockData[sym];
+            if (!d) return;
+            
+            const pEl = document.getElementById(`price-${sym}`);
+            if (pEl) {
+                pEl.innerText = safeFixed(d.price, 1);
+                pEl.className = `text-3xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}`;
+            }
+
+            const cEl = document.getElementById(`change-${sym}`);
+            if (cEl) {
+                const diff = d.change * 100;
+                cEl.innerText = (diff > 0 ? '+' : '') + safeFixed(diff, 2) + '%';
+                cEl.className = `text-sm font-bold px-2 py-1 rounded ${diff >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}`;
+            }
+
+            const tcEl = document.getElementById(`tick-count-${sym}`);
+            if (tcEl) tcEl.innerText = d.tickCount || 0;
+
+            const ofiValEl = document.getElementById(`ofi-val-${sym}`);
+            const ofiBarEl = document.getElementById(`ofi-bar-${sym}`);
+            if (ofiValEl && ofiBarEl) {
+                const ofi = d.ofi || 0;
+                ofiValEl.innerText = ofi > 0 ? `+${Math.round(ofi)}` : Math.round(ofi);
+                ofiValEl.className = `text-xs font-mono font-bold ${ofi > 0 ? 'text-red-400' : (ofi < 0 ? 'text-green-400' : 'text-slate-400')}`;
+                
+                const maxRange = 200; 
+                let pct = (Math.abs(ofi) / maxRange) * 50;
+                if (pct > 50) pct = 50;
+                
+                if (ofi > 0) {
+                    ofiBarEl.style.left = '50%';
+                    ofiBarEl.style.width = `${pct}%`;
+                    ofiBarEl.className = 'ofi-bar bg-red-500 shadow-[0_0_5px_rgba(248,81,73,0.5)]';
+                } else if (ofi < 0) {
+                    ofiBarEl.style.left = `${50 - pct}%`;
+                    ofiBarEl.style.width = `${pct}%`;
+                    ofiBarEl.className = 'ofi-bar bg-green-500 shadow-[0_0_5px_rgba(63,185,80,0.5)]';
+                } else {
+                    ofiBarEl.style.width = '0%';
+                }
+            }
+
+            if (d.depth) updateWall(sym, d.depth);
+            if (d.piranha) updatePiranha(sym, d.piranha);
+            renderChart(sym);
+        }
+
         function renderPositions() {
             const list = document.getElementById('positions-list');
             list.innerHTML = '';
             POSITIONS.forEach(p => {
-                const profit = (p.curr - p.cost) * p.qty;
+                const sData = stockData[p.sym];
+                const currPrice = (sData && sData.price > 0) ? sData.price : p.cost;
+                const mult = getMultiplier(p.sym);
+                const profit = (currPrice - p.cost) * p.qty * mult * (p.side === 'Buy' ? 1 : -1);
                 const profitClass = profit >= 0 ? 'text-red-400' : 'text-green-400';
+                const displayName = p.name || getStockName(p.sym);
+                let percentVal = 0;
+                if (p.cost && p.cost !== 0) percentVal = (currPrice - p.cost) / p.cost * 100;
+
                 const item = document.createElement('div');
-                item.className = 'bg-[#161b22] p-2 rounded border border-slate-800 flex items-center justify-between group hover:border-pink-500/50 transition-all';
+                item.className = 'bg-[#161b22] p-3 rounded border border-slate-800 flex items-center justify-between group hover:border-pink-500/50 transition-all';
                 item.innerHTML = `
-                    <div class="flex flex-col">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-mono text-pink-400 font-bold">${p.sym}</span>
-                            <span class="text-xs text-slate-300 font-bold">${p.name}</span>
-                        </div>
-                        <span class="text-[9px] text-slate-500 mt-0.5">${p.side} ${p.qty} @ ${p.cost}</span>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-xs font-mono font-bold ${profitClass}">${profit >= 0 ? '+' : ''}${Math.round(profit).toLocaleString()}</div>
-                        <div class="text-[9px] text-slate-500 font-mono">${((p.curr - p.cost)/p.cost*100).toFixed(2)}%</div>
-                    </div>
-                `;
+                    <div class="flex flex-col"><div class="flex items-center gap-2"><span class="text-xs font-mono text-pink-400 font-bold">${p.sym}</span><span class="text-sm text-slate-300 font-bold">${displayName}</span></div><span class="text-xs text-slate-500 mt-1">${p.side} ${p.qty} @ ${p.cost}</span></div>
+                    <div class="text-right"><div class="text-sm font-mono font-bold ${profitClass}">${profit >= 0 ? '+' : ''}${Math.round(profit).toLocaleString()}</div><div class="text-xs text-slate-500 font-mono">${safeFixed(percentVal, 2)}%</div></div>`;
                 list.appendChild(item);
             });
         }
-        renderPositions();
 
-        // --- 設定功能 ---
         function toggleSettings(show) { document.getElementById('settings-modal').style.display = show ? 'flex' : 'none'; }
         function saveSettings() {
             const url = document.getElementById('bridge-url-input').value.trim();
-            if(url) {
-                wsUrl = url;
-                localStorage.setItem('canglong_ws_url', wsUrl);
-                connect();
-            }
+            if(url) { wsUrl = url; localStorage.setItem('canglong_ws_url', wsUrl); connect(); }
             toggleSettings(false);
         }
 
-        // --- 繪圖引擎 ---
         function renderChart(sym) {
             const d = stockData[sym];
             const svg = document.getElementById(`svg-${sym}`);
             if (!svg || d.history.length < 2) return;
             const w = svg.clientWidth, h = svg.clientHeight;
+            if (w === 0 || h === 0) return; 
+
             const all = [...d.history, ...d.avgHistory];
             const minP = Math.min(...all), maxP = Math.max(...all), range = maxP - minP || 1;
             const mapY = (v) => h - ((v - minP) / range) * h;
@@ -468,186 +529,267 @@
             svg.innerHTML = `<path d="${ap}" class="avg-line" fill="none" /><path d="${pp}" stroke="${color}" class="price-line" fill="none" /><circle cx="${w}" cy="${mapY(d.price)}" r="3" fill="${color}" />`;
         }
         
-        // --- 真實能量牆更新 (Real L2 Wall) ---
         function updateWall(sym, depth) {
             if(!depth || !depth.bids || !depth.asks) return;
-            // 找出最大量以便正規化寬度 (Best5 Only)
             const maxVol = Math.max(...depth.bids, ...depth.asks, 1);
             for(let i=0; i<5; i++) {
-                const bidW = (depth.bids[i] / maxVol) * 100;
-                const askW = (depth.asks[i] / maxVol) * 100;
-                
-                // Bid (Left Container -> Align Right)
                 const bidEl = document.getElementById(`wall-bid-${sym}-${i}`);
-                if(bidEl) bidEl.style.width = `${bidW}%`; 
-                
-                // Ask (Right Container -> Align Left)
+                if(bidEl) bidEl.style.width = `${(depth.bids[i] / maxVol) * 100}%`; 
                 const askEl = document.getElementById(`wall-ask-${sym}-${i}`);
-                if(askEl) askEl.style.width = `${askW}%`;
+                if(askEl) askEl.style.width = `${(depth.asks[i] / maxVol) * 100}%`;
             }
         }
 
-        // --- 籌碼食人魚更新 (Piranha Radar) ---
         function updatePiranha(sym, data) {
-            const titanW = data.titan;
-            const retailW = data.retail;
-            
-            // 更新進度條
+            if (!data) return;
             const tBar = document.querySelector(`#piranha-bar-${sym} .piranha-titan`);
             const rBar = document.querySelector(`#piranha-bar-${sym} .piranha-retail`);
-            if(tBar && rBar) {
-                tBar.style.width = `${titanW}%`;
-                rBar.style.width = `${retailW}%`;
-            }
+            const titan = (data.titan !== undefined) ? Number(data.titan) : 50;
+            const retail = (data.retail !== undefined) ? Number(data.retail) : 50;
+            if(tBar && rBar) { tBar.style.width = `${titan}%`; rBar.style.width = `${retail}%`; }
             
-            // 更新數字
-            document.getElementById(`piranha-val-titan-${sym}`).innerText = `T:${titanW.toFixed(0)}%`;
-            document.getElementById(`piranha-val-retail-${sym}`).innerText = `R:${retailW.toFixed(0)}%`;
+            const tv = document.getElementById(`piranha-val-titan-${sym}`);
+            if(tv) tv.innerText = `T:${safeFixed(titan, 0)}%`;
         }
 
-        // --- 模擬數據 (離線時演示) ---
         function runMainLoop() {
-            if (ws && ws.readyState === WebSocket.OPEN) return; 
+            if (isRealDataReceiving) {
+                document.getElementById('footer-time').innerText = new Date().toLocaleTimeString();
+                return;
+            }
+            if (ws && ws.readyState === WebSocket.OPEN) return;
 
-            let totalUnrealized = 0;
+            // Demo Mode
             const timeStr = new Date().toLocaleTimeString();
+            const demoSyms = Object.keys(stockData);
+            if (demoSyms.length === 0) {
+                 ['2330', '2454', '2317', '3034', '2303', '2603', '2609', '3231', '6669', '3443', '1101', '2881'].forEach(s => {
+                    updateStockDataModel(s, '', 100, 0, Math.random()*10000);
+                    currentSnapshotSymbols.add(s);
+                 });
+            }
 
-            SYMBOLS.forEach(sym => {
+            demoSyms.forEach(sym => {
                 const d = stockData[sym];
-                if (d.price === 0) { 
-                    d.price = (sym==='2330'?1000:sym==='2454'?1100:sym==='2603'?160:200) + Math.random()*10; 
-                    d.avg = d.price; 
-                }
+                if (d.price === 0) { d.price = 100 + Math.random()*10; d.avg = d.price; }
                 const v = d.price * 0.001;
                 d.price += (Math.random()-0.5)*v + (d.avg - d.price)*0.01;
                 d.avg = d.avg*0.998 + d.price*0.002;
                 d.history.push(d.price); d.avgHistory.push(d.avg);
                 if(d.history.length > 150) { d.history.shift(); d.avgHistory.shift(); }
                 
-                if (Math.random() > 0.95) d.ofi = -0.5 - Math.random() * 0.5; 
-                else d.ofi = (Math.random() * 2 - 0.8).toFixed(2); 
-
-                const pEl = document.getElementById(`price-${sym}`);
-                const cEl = document.getElementById(`change-${sym}`);
-                const ofiEl = document.getElementById(`ofi-${sym}`);
-
-                pEl.innerText = d.price.toFixed(1);
-                pEl.className = `text-xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}`;
-                
-                const diff = ((d.price - d.avg) / d.avg * 100).toFixed(2);
-                cEl.innerText = (diff > 0 ? '+' : '') + diff + '%';
-                cEl.className = `text-xs font-bold px-2 py-0.5 rounded ${diff >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}`;
-
-                if (d.ofi < -0.3) {
-                    ofiEl.innerHTML = `<i data-lucide="alert-triangle" class="w-2 h-2 inline mr-1"></i>OFI:${Number(d.ofi).toFixed(1)}`;
-                    ofiEl.className = `text-[9px] font-mono font-bold px-2 py-0.5 rounded border alert-flash text-red-200 border-red-500`;
-                } else {
-                    ofiEl.innerText = `OFI:${Number(d.ofi).toFixed(1)}`;
-                    ofiEl.className = `text-[9px] font-mono font-bold px-1.5 rounded border border-transparent text-slate-500`;
-                }
-
-                // 模擬 Real Best 5 Data (非均勻隨機，模擬真實掛單)
-                // 產生一個隨機的中心量，然後向外遞減，模擬常態分佈的掛單
-                const baseVol = Math.floor(Math.random() * 50) + 10;
-                const fakeDepth = {
-                    bids: [baseVol, baseVol*0.8, baseVol*1.2, baseVol*0.5, baseVol*0.3].map(x => Math.floor(x * (0.8 + Math.random()*0.4))),
-                    asks: [baseVol, baseVol*0.9, baseVol*0.6, baseVol*1.1, baseVol*0.4].map(x => Math.floor(x * (0.8 + Math.random()*0.4)))
-                };
-                updateWall(sym, fakeDepth);
-
-                // 模擬 Piranha 籌碼 (緩慢變化)
-                if(Math.random() > 0.8) {
-                    const change = (Math.random() - 0.5) * 5;
-                    d.piranha.titan = Math.max(0, Math.min(100, d.piranha.titan + change));
-                    d.piranha.retail = 100 - d.piranha.titan;
-                    updatePiranha(sym, d.piranha);
-                }
-
-                renderChart(sym);
+                // Demo OFI
+                d.tickCount = (d.tickCount || 0) + Math.floor(Math.random() * 3);
+                d.ofi = (d.ofi || 0) + (Math.random() - 0.5) * 50; 
             });
             
-            POSITIONS.forEach(p => {
-                if(stockData[p.sym]) {
-                    p.curr = stockData[p.sym].price;
-                    totalUnrealized += (p.curr - p.cost) * p.qty;
-                }
-            });
-            renderPositions();
-            lucide.createIcons();
-
-            document.getElementById('mkt-txf-p').innerText = (23000 + Math.random()*20).toFixed(0);
-            
-            // 更新宏觀儀表: Nasdaq Futures
-            // 模擬 18000 ~ 18500 跳動
-            const nqVal = 18200 + Math.floor(Math.random() * 50 - 25);
-            document.getElementById('macro-nq').innerText = nqVal.toLocaleString();
-
-            document.getElementById('stat-realized-pnl').innerText = "+$24,800";
-            
-            const unPnL = document.getElementById('stat-unrealized-pnl');
-            unPnL.innerText = (totalUnrealized >= 0 ? '+$' : '-$') + Math.abs(Math.round(totalUnrealized)).toLocaleString();
-            unPnL.className = `text-5xl font-mono font-black animate-pulse-glow ${totalUnrealized >= 0 ? 'neon-text-red' : 'neon-text-green'}`;
-
-            document.getElementById('footer-time').innerText = timeStr;
-            document.getElementById('footer-latency').innerText = "延遲: --ms (DEMO)";
+            renderDragonMatrix();
+            document.getElementById('footer-time').innerText = timeStr + " (DEMO)";
         }
 
-        // --- 連線核心 ---
+        function appendLog(logMsg) {
+            const box = document.getElementById('ai-chat-box');
+            if(box.children.length > 50) box.removeChild(box.firstChild);
+            
+            const logDiv = document.createElement('div');
+            logDiv.className = "flex gap-3 animate-fade-in opacity-80";
+            logDiv.innerHTML = `
+                <div class="w-8 flex-shrink-0 text-center text-xs text-slate-600 font-mono pt-1">SYS</div>
+                <div class="text-xs font-mono text-slate-400 border-l-2 border-slate-700 pl-2 py-0.5 leading-relaxed break-all">${logMsg}</div>
+            `;
+            box.appendChild(logDiv);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function appendDecision(decisions) {
+            if(!decisions || decisions.length === 0) return;
+            const tbody = document.getElementById('order-tbody');
+            if(tbody.querySelector('td[colspan="3"]')) tbody.innerHTML = '';
+            
+            decisions.forEach(d => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-800/50 transition-colors animate-fade-in";
+                const timeStr = d.time ? d.time.split('T')[1].split('.')[0] : new Date().toLocaleTimeString();
+                const isTrade = d.action.includes("★");
+                const scoreClass = isTrade ? 'text-yellow-400 font-black' : (d.score > 60 ? 'text-red-400' : (d.score < 40 ? 'text-green-400' : 'text-slate-500'));
+                row.innerHTML = `
+                    <td class="py-2 px-3 text-xs font-mono text-slate-500">${timeStr}</td>
+                    <td class="py-2 px-3 font-bold text-blue-400">${d.symbol}</td>
+                    <td class="py-2 px-3 text-right font-mono font-bold ${scoreClass}">${d.action} (${safeFixed(d.score, 0)})</td>
+                `;
+                tbody.prepend(row);
+                if(tbody.children.length > 20) tbody.removeChild(tbody.lastChild);
+            });
+        }
+
         function connect() {
             if (!wsUrl) return;
             if (ws) ws.close();
-            ws = new WebSocket(wsUrl);
+            try { ws = new WebSocket(wsUrl); } catch (e) { return; }
             
             ws.onopen = () => {
                 const dot = document.getElementById('footer-ws');
                 dot.className = 'text-green-500 flex items-center gap-2';
-                dot.innerHTML = '<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_5px_#3fb950] animate-pulse"></div> BRIDGE: 連線成功';
+                dot.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#3fb950] animate-pulse"></div> BRIDGE: 連線成功';
+                localStorage.setItem('canglong_ws_url', wsUrl);
             };
-
             ws.onclose = () => {
                 const dot = document.getElementById('footer-ws');
                 dot.className = 'text-red-500 flex items-center gap-2';
-                dot.innerHTML = '<div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> BRIDGE: 斷線重連中...';
+                dot.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div> BRIDGE: 斷線 (${wsUrl})`;
+                isRealDataReceiving = false;
                 setTimeout(connect, 3000);
             };
-
             ws.onmessage = (e) => {
-                const msg = JSON.parse(e.data);
-                if (msg.type === 'DASHBOARD_TICKS') {
-                    msg.data.forEach(t => {
-                        const d = stockData[t.symbol];
-                        if (d) {
-                            d.price = t.close;
-                            d.change = t.change;
-                            d.ofi = t.ofi || d.ofi;
-                            d.avg = t.avg || d.avg;
-                            d.history.push(d.price); d.avgHistory.push(d.avg);
-                            if(d.history.length > 150) { d.history.shift(); d.avgHistory.shift(); }
-                            
-                            document.getElementById(`price-${t.symbol}`).innerText = d.price.toFixed(1);
-                            
-                            // 更新真實 L2 能量牆
-                            if(t.depth) updateWall(t.symbol, t.depth);
+                let msg = {};
+                try { msg = JSON.parse(e.data); } catch(err) { return; }
 
-                            // 更新籌碼雷達 (假設後端傳回 piranha 物件)
-                            if(t.piranha) updatePiranha(t.symbol, t.piranha);
-                            
-                            renderChart(t.symbol);
+                if (msg.type === 'zmq_update' && msg.data) {
+                    isRealDataReceiving = true; 
+                    if (msg.topic === 'DASHBOARD_TICKS' || Array.isArray(msg.data)) msg = { type: 'DASHBOARD_TICKS', data: msg.data };
+                    else if (msg.topic === 'DASHBOARD_MARKET') msg = { type: 'DASHBOARD_MARKET', data: msg.data };
+                    else if (msg.topic === 'DASHBOARD_SNAPSHOT') msg = { type: 'DASHBOARD_SNAPSHOT', data: msg.data };
+                    else if (msg.topic === 'DASHBOARD_LOGS') msg = { type: 'DASHBOARD_LOGS', data: msg.data };
+                    else if (msg.topic === 'DASHBOARD_DECISIONS') msg = { type: 'DASHBOARD_DECISIONS', data: msg.data };
+                    else return;
+                }
+                
+                if (Array.isArray(msg)) msg = { type: 'DASHBOARD_TICKS', data: msg };
+
+                if (msg.type === 'DASHBOARD_TICKS') {
+                    if (!msg.data) return;
+                    msg.data.forEach(t => {
+                        let rawSym = t.s || t.symbol;
+                        if (!rawSym) return;
+                        const sym = rawSym.split('.')[0];
+                        
+                        updateStockDataModel(
+                            sym, 
+                            t.n || sym, 
+                            (t.p !== undefined) ? t.p : t.close, 
+                            Number(t.chg || t.change || 0), 
+                            t.v, 
+                            t.depth, t.piranha,
+                            1, 
+                            (t.v || 0), 
+                            (t.sd || 0) 
+                        );
+                        
+                        const d = stockData[sym];
+                        if (d) {
+                            d.history.push(d.price); 
+                            d.avgHistory.push(t.avg || d.price);
+                            if(d.history.length > 150) { d.history.shift(); d.avgHistory.shift(); }
+                            updateRowView(sym);
+                        }
+                        if (sym === 'TXF' || sym === 'TX01') {
+                            const txfEl = document.getElementById('mkt-txf-p');
+                            if(txfEl && d) txfEl.innerText = Math.floor(d.price).toLocaleString();
                         }
                     });
-                } else if (msg.type === 'DASHBOARD_SNAPSHOT') {
-                    if (msg.data.pnl) {
-                        const pnl = msg.data.pnl;
-                        document.getElementById('stat-realized-pnl').innerText = `$${pnl.realized.toLocaleString()}`;
-                        const unPnL = document.getElementById('stat-unrealized-pnl');
-                        unPnL.innerText = (pnl.unrealized >= 0 ? '+$' : '-$') + Math.abs(pnl.unrealized).toLocaleString();
-                        unPnL.className = `text-5xl font-mono font-black ${pnl.unrealized >= 0 ? 'neon-text-red' : 'neon-text-green'}`;
+                    
+                    updateLocalUnrealizedPnL();
+                    document.getElementById('footer-latency').innerText = "延遲: 12ms (LIVE)";
+                } 
+                else if (msg.type === 'DASHBOARD_MARKET') {
+                    const m = msg.data;
+                    if (m.marketBreadth) {
+                        document.getElementById('mkt-up-count').innerText = m.marketBreadth.up;
+                        document.getElementById('mkt-down-count').innerText = m.marketBreadth.down;
                     }
+                    if (m.futures && m.futures.TXF) {
+                        const ratio = m.futures.TXF.pressure_ratio;
+                        const elVal = document.getElementById('mkt-pressure-val');
+                        if (elVal) elVal.innerText = `Ratio: ${safeFixed(ratio, 2)}`;
+                        if (m.futures.TXF.hmm_ratio !== undefined) {
+                            const hmmRatio = Number(m.futures.TXF.hmm_ratio);
+                            if (!isNaN(hmmRatio)) {
+                                const hmmEl = document.getElementById('mkt-txf-hmm');
+                                const hmmBar = document.getElementById('hmm-bar');
+                                const hmmStatus = document.getElementById('hmm-status-text');
+                                hmmEl.innerText = safeFixed(hmmRatio, 2);
+                                let delta = hmmRatio - 1.0;
+                                if (delta > 0.5) delta = 0.5; if (delta < -0.5) delta = -0.5;
+                                const percentage = Math.abs(delta) / 0.5 * 50; 
+                                if (delta > 0) {
+                                    hmmBar.style.left = '50%'; hmmBar.style.width = `${percentage}%`;
+                                    hmmBar.className = 'h-full transition-all duration-500 ease-out absolute bg-red-500 shadow-[0_0_5px_#f85149]';
+                                    hmmEl.className = 'text-xs font-mono font-bold text-red-400';
+                                    hmmStatus.innerText = hmmRatio > 1.05 ? "強力多方" : "偏多";
+                                } else if (delta < 0) {
+                                    hmmBar.style.left = `${50 - percentage}%`; hmmBar.style.width = `${percentage}%`;
+                                    hmmBar.className = 'h-full transition-all duration-500 ease-out absolute bg-green-500 shadow-[0_0_5px_#3fb950]';
+                                    hmmEl.className = 'text-xs font-mono font-bold text-green-400';
+                                    hmmStatus.innerText = hmmRatio < 0.95 ? "強力空方" : "偏空";
+                                } else {
+                                    hmmBar.style.width = '0%'; hmmStatus.innerText = "盤整";
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (msg.type === 'DASHBOARD_SNAPSHOT') {
+                    if (msg.data) {
+                        isRealDataReceiving = true;
+                        
+                        if (msg.data.quotes && Array.isArray(msg.data.quotes)) {
+                            currentSnapshotSymbols.clear();
+                            msg.data.quotes.forEach(q => {
+                                const sym = q.s.split('.')[0];
+                                currentSnapshotSymbols.add(sym);
+                                updateStockDataModel(
+                                    sym, q.n, q.p, q.chg, 
+                                    q.v, 
+                                    q.depth, q.piranha
+                                );
+                            });
+                            renderDragonMatrix();
+                        }
+
+                        if (msg.data.pnl) {
+                            const pnl = msg.data.pnl;
+                            document.getElementById('stat-realized-pnl').innerText = `$${pnl.realized.toLocaleString()}`;
+                            if(pnl.trades_count !== undefined) document.getElementById('stat-count').innerText = pnl.trades_count;
+                            const winRateEl = document.getElementById('stat-win');
+                            if (winRateEl) {
+                                const rawWinRate = pnl.win_rate !== undefined ? pnl.win_rate : pnl.winRate;
+                                if (rawWinRate !== undefined) {
+                                    const val = Number(rawWinRate);
+                                    winRateEl.innerText = (val * 100).toFixed(1) + '%';
+                                    winRateEl.className = val >= 0.5 ? 'text-red-400 font-bold' : 'text-green-400 font-bold';
+                                } else if (pnl.trades_count > 0 && pnl.winning_trades !== undefined) {
+                                    const rate = Number(pnl.winning_trades) / Number(pnl.trades_count);
+                                    winRateEl.innerText = (rate * 100).toFixed(1) + '%';
+                                    winRateEl.className = rate >= 0.5 ? 'text-red-400 font-bold' : 'text-green-400 font-bold';
+                                } else {
+                                    winRateEl.innerText = '--%';
+                                }
+                            }
+                        }
+                        if (msg.data.positions && Array.isArray(msg.data.positions)) {
+                            POSITIONS = msg.data.positions.map(p => {
+                                const sym = p.s.split('.')[0];
+                                return {
+                                    sym: sym,
+                                    name: p.n || getStockName(sym),
+                                    qty: p.q,
+                                    cost: p.p,
+                                    side: p.type === 'long' ? 'Buy' : 'Sell'
+                                };
+                            });
+                            updateLocalUnrealizedPnL();
+                            renderPositions();
+                        }
+                    }
+                }
+                else if (msg.type === 'DASHBOARD_LOGS') {
+                    if (Array.isArray(msg.data)) msg.data.forEach(log => appendLog(log));
+                }
+                else if (msg.type === 'DASHBOARD_DECISIONS') {
+                    if (Array.isArray(msg.data)) appendDecision(msg.data);
                 }
             };
         }
-
-        // --- AI 互動 ---
         function askAI() {
             const input = document.getElementById('ai-input');
             const box = document.getElementById('ai-chat-box');
@@ -657,7 +799,6 @@
             input.value = '';
             box.scrollTop = box.scrollHeight;
         }
-
         connect();
         setInterval(runMainLoop, 1000);
     </script>
