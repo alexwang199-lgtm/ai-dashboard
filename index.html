@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>蒼龍計畫：全域指揮官戰術終端 v32.5 (Scrollable)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蒼龍計畫：全域指揮官戰術終端 v33.1 (Live Dashboard)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -16,44 +16,23 @@
             --neon-yellow: #e3b341;
             --border: #30363d;
         }
-        
-        /* [Modified] Allow scrolling on all devices */
         body { 
             background: radial-gradient(circle at center, #161b22 0%, #02040a 100%); 
             color: #c9d1d9; 
             font-family: 'Segoe UI', "Microsoft JhengHei", system-ui, sans-serif; 
-            overflow-x: hidden;
-            overflow-y: auto; /* Enable vertical scrolling */
-            min-height: 100vh; /* Ensure full height background */
+            overflow: hidden; 
         }
-
         .cyber-section { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
         .cyber-section::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--border); opacity: 0.5; }
-        
         .section-title { background: #161b22; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: bold; color: #8b949e; letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-        
-        /* Dragon Row: Mobile uses Card layout, Desktop uses Flex Row */
         .dragon-row {
+            height: 72px; 
             border-bottom: 1px solid var(--border);
-            padding: 12px;
+            display: flex; align-items: center; padding: 0 16px; gap: 16px;
             background: linear-gradient(90deg, #0d1117 0%, #161b22 100%);
             transition: background 0.2s;
-            display: flex;
-            flex-direction: column; /* Mobile Default */
-            gap: 8px;
         }
         .dragon-row:hover { background: #1f242c; border-left: 4px solid var(--accent-blue); }
-
-        @media (min-width: 1024px) {
-            .dragon-row {
-                flex-direction: row; /* Desktop Row */
-                height: 72px;
-                padding: 0 16px;
-                gap: 16px;
-                align-items: center;
-            }
-        }
-
         .price-line { stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .avg-line { stroke: #8b949e; stroke-width: 1.5; stroke-dasharray: 4,4; opacity: 0.5; }
         .cyber-select { background-color: #0d1117; border: 1px solid var(--border); color: #c9d1d9; font-size: 13px; padding: 2px 8px; border-radius: 4px; outline: none; }
@@ -61,6 +40,8 @@
         .neon-text-red { color: #ff6b6b; text-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
         .neon-text-green { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.4); }
         .neon-text-yellow { color: #fcd34d; text-shadow: 0 0 10px rgba(252, 211, 77, 0.4); }
+        
+        /* [v32.3] 新增避險專用色 (Amber-500) */
         .text-hedge { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
         
         .custom-scroll::-webkit-scrollbar { width: 6px; }
@@ -68,10 +49,9 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
         @keyframes pulse-glow { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } }
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
-        
-        .wall-container { display: flex; flex-direction: column; gap: 1px; width: 100%; height: 100%; justify-content: center; font-size: 0; }
-        @media (min-width: 1024px) { .wall-container { width: 45px; } }
-
+        .alert-flash { animation: flash-red 1s infinite; }
+        @keyframes flash-red { 0%, 100% { background-color: rgba(185, 28, 28, 0.2); border-color: rgba(248, 113, 113, 0.5); } 50% { background-color: rgba(185, 28, 28, 0.5); border-color: rgba(248, 113, 113, 1); } }
+        .wall-container { display: flex; flex-direction: column; gap: 1px; width: 45px; height: 100%; justify-content: center; font-size: 0; }
         .wall-row { display: flex; height: 16%; width: 100%; align-items: center; gap: 1px; }
         .wall-bid-container { flex: 1; display: flex; justify-content: flex-end; background: rgba(13, 17, 23, 0.5); height: 100%; }
         .wall-ask-container { flex: 1; display: flex; justify-content: flex-start; background: rgba(13, 17, 23, 0.5); height: 100%; }
@@ -90,9 +70,9 @@
         #dragon-list > div { transition: all 0.5s ease; }
     </style>
 </head>
-<body class="flex flex-col p-2 gap-2 lg:p-4 lg:gap-4 min-h-screen">
+<body class="h-screen flex flex-col p-4 gap-4">
     <div id="settings-modal">
-        <div class="cyber-section w-11/12 max-w-md p-6 space-y-4 shadow-2xl border-blue-500/50 bg-[#0d1117]">
+        <div class="cyber-section w-96 p-6 space-y-4 shadow-2xl border-blue-500/50 bg-[#0d1117]">
             <h2 class="text-xl font-bold text-blue-400 border-b border-slate-800 pb-2">系統連線設定</h2>
             <div class="space-y-2">
                 <label class="text-xs text-slate-500 uppercase font-bold">Bridge 伺服器網址 (WSS)</label>
@@ -105,175 +85,184 @@
         </div>
     </div>
 
-    <!-- Top PnL (Responsive: Stack on mobile, Row on desktop) -->
-    <div class="flex flex-col lg:flex-row gap-2 lg:gap-4 flex-shrink-0 lg:h-28">
-        <div class="cyber-section flex-1 flex flex-col lg:flex-row items-center p-4 lg:px-8 justify-between bg-gradient-to-r from-[#0d1117] via-[#161b22] to-[#0d1117] shadow-lg border-l-4 border-l-blue-500 gap-4 lg:gap-0">
-            <!-- Mobile Layout Adjustment: Grid or Flex col -->
-            <div class="w-full flex justify-between items-center lg:w-auto lg:block">
-                <div class="flex flex-col gap-1">
-                    <div class="flex items-center gap-2 text-slate-500 text-xs lg:text-sm font-bold uppercase tracking-wider"><i data-lucide="check-circle" class="w-4 h-4 lg:w-5 lg:h-5"></i> 今日已實現</div>
-                    <div id="stat-realized-pnl" class="text-2xl lg:text-4xl font-mono font-bold text-slate-200 tracking-tight">$0</div>
-                </div>
-                <!-- Stats hidden on small mobile, shown on right side or bottom -->
-                <div class="flex flex-col items-end gap-1 lg:hidden">
-                     <div class="text-xs text-slate-600 font-mono">SYSTEM READY</div>
-                     <button onclick="toggleSettings(true)" class="text-slate-600 hover:text-blue-400"><i data-lucide="settings" class="w-5 h-5"></i></button>
-                </div>
+    <!-- Top PnL -->
+    <div class="h-28 flex gap-4 flex-shrink-0">
+        <div class="cyber-section flex-1 flex flex-row items-center px-8 justify-between bg-gradient-to-r from-[#0d1117] via-[#161b22] to-[#0d1117] shadow-lg border-l-4 border-l-blue-500">
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-slate-500 text-sm font-bold uppercase tracking-wider"><i data-lucide="check-circle" class="w-5 h-5"></i> 今日已實現損益</div>
+                <div id="stat-realized-pnl" class="text-4xl font-mono font-bold text-slate-200 tracking-tight">$0</div>
             </div>
-
-            <div class="flex flex-col items-center justify-center w-full lg:w-auto border-t lg:border-t-0 border-slate-800 pt-2 lg:pt-0">
-                <div class="text-[10px] lg:text-xs text-slate-500 font-bold uppercase tracking-[0.2em] mb-1 bg-slate-900/50 px-4 py-1 rounded-full border border-slate-800">即時帳面損益</div>
-                <div id="stat-unrealized-pnl" class="text-5xl lg:text-6xl font-mono font-black neon-text-red animate-pulse-glow">+$0</div>
+            <div class="flex flex-col items-center justify-center">
+                <div class="text-xs text-slate-500 font-bold uppercase tracking-[0.2em] mb-1 bg-slate-900/50 px-4 py-1 rounded-full border border-slate-800">即時帳面損益 (Unrealized)</div>
+                <div id="stat-unrealized-pnl" class="text-6xl font-mono font-black neon-text-red animate-pulse-glow">+$0</div>
             </div>
+            
+            <!-- [v33.1 Update] Added Quota Monitoring -->
+            <div class="flex flex-col items-end gap-2">
+                <div class="w-48 bg-slate-900/50 p-2 rounded border border-slate-800">
+                    <div class="flex justify-between w-full text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">
+                        <span>當沖額度 (Quota)</span>
+                        <span id="quota-text" class="text-blue-400">0%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+                        <div id="quota-bar" class="h-full bg-blue-600 transition-all duration-500 shadow-[0_0_8px_rgba(37,99,235,0.6)]" style="width: 0%"></div>
+                    </div>
+                </div>
 
-            <div class="hidden lg:flex flex-col items-end gap-3">
-                <div class="flex gap-6 text-base font-mono text-slate-400 bg-slate-900/50 px-4 py-2 rounded border border-slate-800">
+                <div class="flex gap-4 text-base font-mono text-slate-400 px-2">
                     <span>成交: <span id="stat-count" class="text-white font-bold">0</span></span>
                     <span class="text-slate-600">|</span>
                     <span>勝率: <span id="stat-win" class="text-blue-400 font-bold">--%</span></span>
                 </div>
-                <div class="text-xs text-slate-600 font-mono">SYSTEM READY</div>
             </div>
-            <button onclick="toggleSettings(true)" class="hidden lg:block absolute top-3 right-3 text-slate-600 hover:text-blue-400 transition-colors"><i data-lucide="settings" class="w-5 h-5"></i></button>
+
+            <button onclick="toggleSettings(true)" class="absolute top-3 right-3 text-slate-600 hover:text-blue-400 transition-colors"><i data-lucide="settings" class="w-5 h-5"></i></button>
         </div>
     </div>
 
-    <!-- Market Overview (Responsive) -->
-    <div class="flex flex-col lg:flex-row gap-2 lg:gap-4 flex-shrink-0 lg:h-16">
-        <div class="cyber-section flex-1 flex flex-col lg:flex-row items-start lg:items-center p-4 lg:px-8 gap-4 lg:gap-8 bg-[#0d1117]">
-            
-            <!-- Row 1 on Mobile: Price & HMM -->
-            <div class="w-full lg:w-auto flex items-center justify-between lg:justify-start gap-4">
-                <div class="flex items-center gap-2 lg:gap-4">
-                    <span class="text-xs lg:text-sm font-bold text-blue-400 bg-blue-900/20 px-2 py-1 lg:px-3 lg:py-1.5 rounded">TXF</span>
-                    <span id="mkt-txf-p" class="font-mono text-xl lg:text-2xl font-bold text-white">---</span>
-                    <span id="mkt-txf-c" class="text-xs lg:text-sm font-mono text-slate-500">0.00%</span>
-                </div>
+    <!-- Market Overview (Modified v33.1) -->
+    <div class="h-16 flex gap-4 flex-shrink-0">
+        <div class="cyber-section flex-1 flex flex-row items-center px-8 gap-8 bg-[#0d1117]">
+            <!-- TXF Price -->
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-blue-400 bg-blue-900/20 px-3 py-1.5 rounded">台指期 TXF</span>
+                <span id="mkt-txf-p" class="font-mono text-2xl font-bold text-white">---</span>
+                <span id="mkt-txf-c" class="text-sm font-mono text-slate-500">0.00%</span>
                 
-                <div class="flex flex-col justify-center gap-1 bg-slate-900/90 px-2 py-1 lg:px-4 lg:py-2 rounded-md border border-slate-700/60 shadow-inner min-w-[120px] lg:min-w-[150px]" id="hmm-container">
+                <!-- HMM Bar -->
+                <div class="flex flex-col justify-center gap-1 ml-4 bg-slate-900/90 px-4 py-2 rounded-md border border-slate-700/60 shadow-inner min-w-[150px]" id="hmm-container">
                     <div class="flex justify-between items-center">
-                         <span class="text-[9px] lg:text-[10px] text-slate-500 uppercase font-bold tracking-tight">AI 多空比</span>
-                         <span id="mkt-txf-hmm" class="text-[10px] lg:text-xs font-mono font-bold text-slate-400">---</span>
+                         <span class="text-[10px] text-slate-500 uppercase font-bold tracking-tight">AI 多空比</span>
+                         <span id="mkt-txf-hmm" class="text-xs font-mono font-bold text-slate-400">---</span>
                     </div>
-                    <div class="flex items-center gap-2 w-full h-2 lg:h-3">
-                        <div class="flex-1 h-1.5 lg:h-2 bg-slate-800 rounded-full relative overflow-hidden flex items-center shadow-inner border border-slate-700/30">
+                    <div class="flex items-center gap-2 w-full h-3">
+                        <div class="flex-1 h-2 bg-slate-800 rounded-full relative overflow-hidden flex items-center shadow-inner border border-slate-700/30">
                             <div class="absolute left-1/2 w-[1px] h-full bg-slate-500 z-10 opacity-50"></div>
                             <div id="hmm-bar" class="h-full transition-all duration-500 ease-out absolute" style="width: 0%; left: 50%;"></div>
                         </div>
-                        <span id="hmm-status-text" class="text-[9px] lg:text-[10px] font-bold text-slate-500 w-8 lg:w-12 text-right">等待</span>
+                        <span id="hmm-status-text" class="text-[10px] font-bold text-slate-500 w-12 text-right">等待</span>
                     </div>
                 </div>
             </div>
             
-            <div class="hidden lg:block h-10 w-px bg-slate-800"></div>
+            <div class="h-10 w-px bg-slate-800"></div>
             
-            <!-- Row 2 on Mobile: Breadth & Brain Core -->
-            <div class="w-full lg:w-auto flex flex-col lg:flex-row gap-3 lg:gap-8 lg:items-center">
-                <!-- Up/Down Count -->
-                <div class="flex items-center justify-between lg:justify-start gap-6 text-sm font-mono border-b border-slate-800 pb-2 lg:border-0 lg:pb-0">
-                    <div class="flex items-center gap-2"><i data-lucide="trending-up" class="w-4 h-4 text-red-500"></i><span class="text-red-400 font-bold" id="mkt-up-count">---</span></div>
-                    <div class="flex items-center gap-2"><i data-lucide="trending-down" class="w-4 h-4 text-green-500"></i><span class="text-green-400 font-bold" id="mkt-down-count">---</span></div>
-                </div>
-                
-                <div class="hidden lg:block h-10 w-px bg-slate-800"></div>
-                
-                <!-- Brain Core Widget -->
-                <div class="lg:ml-auto w-full lg:w-auto flex items-center gap-4 bg-slate-900/80 px-4 py-1.5 rounded-lg border border-blue-900/30 shadow-[0_0_15px_rgba(59,130,246,0.1)] justify-between lg:justify-start">
-                    <!-- Mode & RS -->
-                    <div class="flex flex-col items-start lg:items-end border-r border-slate-700 pr-4">
-                        <span class="text-[10px] text-blue-400 font-bold tracking-wider uppercase">戰術模式</span>
-                        <div class="flex items-center gap-2">
-                            <span id="core-mode" class="text-sm font-black text-yellow-400 neon-text-yellow tracking-wide">WAITING</span>
-                            <span id="core-rs" class="text-xs font-mono text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">RS: -.--</span>
-                        </div>
+            <!-- Up/Down Count -->
+            <div class="flex items-center gap-6 text-sm font-mono">
+                <div class="flex items-center gap-2" title="上漲家數"><i data-lucide="trending-up" class="w-4 h-4 text-red-500"></i><span class="text-red-400 font-bold" id="mkt-up-count">---</span></div>
+                <div class="flex items-center gap-2" title="下跌家數"><i data-lucide="trending-down" class="w-4 h-4 text-green-500"></i><span class="text-green-400 font-bold" id="mkt-down-count">---</span></div>
+            </div>
+            
+            <div class="h-10 w-px bg-slate-800"></div>
+            
+            <!-- [v33.1 New] Brain Core Status Widget with Kinetic -->
+            <div class="ml-auto flex items-center gap-4 bg-slate-900/80 px-4 py-1.5 rounded-lg border border-blue-900/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                <div class="flex flex-col items-end border-r border-slate-700 pr-4">
+                    <span class="text-[10px] text-blue-400 font-bold tracking-wider uppercase">戰術模式 (Brain)</span>
+                    <div class="flex items-center gap-2">
+                        <span id="core-mode" class="text-sm font-black text-yellow-400 neon-text-yellow tracking-wide">WAITING</span>
+                        <span id="core-rs" class="text-xs font-mono text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">RS: -.--</span>
                     </div>
-                    <!-- Weights -->
-                    <div class="flex flex-col gap-1 w-32">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[9px] text-slate-500 uppercase tracking-tight">動態權重 (M/T/C)</span>
-                            <span id="core-weights-txt" class="text-[9px] font-mono text-slate-400">--/--/--</span>
-                        </div>
-                        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden flex">
-                            <div id="w-macro" class="bg-blue-500 h-full transition-all duration-500" style="width: 33%" title="宏觀 (Macro)"></div>
-                            <div id="w-tech" class="bg-purple-500 h-full transition-all duration-500" style="width: 33%" title="技術 (Tech)"></div>
-                            <div id="w-chip" class="bg-red-500 h-full transition-all duration-500" style="width: 34%" title="籌碼 (Chip)"></div>
-                        </div>
+                </div>
+
+                <div class="flex flex-col items-center border-r border-slate-700 px-4 w-32">
+                    <span class="text-[10px] text-purple-400 font-bold tracking-wider uppercase">量子動能 (Kinetic)</span>
+                    <div class="flex items-center justify-between w-full mt-0.5">
+                        <span id="entropy-rvol" class="text-xs font-mono text-slate-400">RVOL:0.0</span>
+                        <span id="entropy-alert" class="text-[9px] font-bold text-slate-500 bg-slate-800 px-1.5 rounded tracking-tight">N/A</span>
+                    </div>
+                    <div id="entropy-eff" class="text-[9px] font-mono text-slate-600 mt-0.5 tracking-tight w-full text-center">Efficiency: 0.0000</div>
+                </div>
+
+                <div class="flex flex-col gap-1 w-24">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[9px] text-slate-500 uppercase tracking-tight">動態權重</span>
+                        <span id="core-weights-txt" class="text-[9px] font-mono text-slate-400">--/--/--</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden flex">
+                        <div id="w-macro" class="bg-blue-500 h-full transition-all duration-500" style="width: 33%" title="宏觀 (Macro)"></div>
+                        <div id="w-tech" class="bg-purple-500 h-full transition-all duration-500" style="width: 33%" title="技術 (Tech)"></div>
+                        <div id="w-chip" class="bg-red-500 h-full transition-all duration-500" style="width: 34%" title="籌碼 (Chip)"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content (Stack on mobile, Row on desktop) -->
-    <!-- Removed fixed height restriction for scrolling on mobile -->
-    <div class="flex flex-col lg:flex-row gap-2 lg:gap-4 min-h-0 lg:h-1/3 shrink-0">
+    <!-- Main Content -->
+    <div class="h-1/3 min-h-[300px] flex gap-4">
         <!-- Orders -->
-        <div class="cyber-section w-full lg:w-1/4 shadow-lg border-l-4 border-l-purple-500 flex flex-col h-48 lg:h-auto order-2 lg:order-1">
-            <div class="section-title"><span class="flex items-center gap-2 text-purple-400"><i data-lucide="list-ordered" class="w-4 h-4"></i> 策略訊號</span><select id="quick-order-select" class="cyber-select h-6 text-xs w-24 lg:w-auto"><option>選取...</option></select></div>
+        <div class="cyber-section w-1/4 shadow-lg border-l-4 border-l-purple-500 flex flex-col">
+            <div class="section-title"><span class="flex items-center gap-2 text-purple-400"><i data-lucide="list-ordered" class="w-4 h-4"></i> 策略訊號與委託</span><select id="quick-order-select" class="cyber-select h-6 text-xs"><option>快速選取...</option></select></div>
             <div class="flex-1 overflow-y-auto custom-scroll p-0 relative">
                 <table class="w-full text-sm font-mono">
                     <thead class="bg-[#161b22] text-slate-500 sticky top-0 z-10"><tr><th class="text-left py-2 px-3 font-normal">時間</th><th class="text-left py-2 px-3 font-normal">代碼</th><th class="text-right py-2 px-3 font-normal">訊號</th></tr></thead>
-                    <tbody id="order-tbody" class="text-slate-300 divide-y divide-slate-800/50"><tr><td colspan="3" class="text-center py-4 text-slate-600 italic text-sm">等待決策...</td></tr></tbody>
+                    <tbody id="order-tbody" class="text-slate-300 divide-y divide-slate-800/50"><tr><td colspan="3" class="text-center py-10 text-slate-600 italic text-sm">等待 AI 策略決策...</td></tr></tbody>
                 </table>
             </div>
         </div>
-        
-        <!-- Stats (Grouped) -->
-        <div class="w-full lg:w-1/4 flex flex-row lg:flex-col gap-2 lg:gap-4 h-auto lg:h-auto order-3 lg:order-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-            <!-- Heatmap -->
-            <div class="cyber-section w-1/2 lg:w-full h-24 lg:h-[100px] border-l-4 border-l-orange-500 flex-shrink-0">
+        <!-- Stats -->
+        <div class="w-1/4 flex flex-col gap-4">
+            <!-- [v33.0 Modified] Sector Heat -->
+            <div class="cyber-section h-[100px] border-l-4 border-l-orange-500 flex-shrink-0">
                 <div class="section-title py-2"><span class="flex items-center gap-2 text-orange-400"><i data-lucide="flame" class="w-4 h-4"></i> 族群熱度</span></div>
-                <div class="flex-1 p-2 lg:p-3 flex flex-col justify-center gap-2 bg-[#0b0e13]">
-                    <div class="flex items-center gap-2 text-xs"><span class="w-10 lg:w-12 text-slate-400 text-right">半導體</span><div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-red-500 heat-bar-fill" style="width: 85%"></div></div><span class="text-red-400 font-mono w-8 lg:w-10 text-right">+2.4%</span></div>
-                    <div class="flex items-center gap-2 text-xs"><span class="w-10 lg:w-12 text-slate-400 text-right">AI組裝</span><div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-orange-500 heat-bar-fill" style="width: 65%"></div></div><span class="text-orange-400 font-mono w-8 lg:w-10 text-right">+1.1%</span></div>
+                <div id="sector-heat-container" class="flex-1 p-3 flex flex-col justify-start gap-2 bg-[#0b0e13] overflow-y-auto custom-scroll" style="max-height: 120px;">
+                    <div class="text-xs text-slate-500 text-center italic mt-4">等待 AI 數據連動...</div>
                 </div>
             </div>
             
-            <!-- Positions -->
-            <div class="cyber-section w-1/2 lg:w-full h-24 lg:flex-1 border-l-4 border-l-pink-500 min-h-0 flex flex-col flex-shrink-0">
-                <div class="section-title py-2"><span class="flex items-center gap-2 text-pink-400"><i data-lucide="briefcase" class="w-4 h-4"></i> 持倉</span></div>
-                <div class="flex-1 overflow-y-auto custom-scroll p-2 space-y-2 bg-[#0b0e13]" id="positions-list"></div>
+            <!-- [v33.0 Modified] Macro Stats -->
+            <div class="cyber-section h-[80px] border-l-4 border-l-cyan-500 flex-shrink-0">
+                <div class="section-title py-2"><span class="flex items-center gap-2 text-cyan-400"><i data-lucide="globe" class="w-4 h-4"></i> 宏觀儀表</span></div>
+                <div class="flex-1 flex items-center justify-around px-2 bg-[#0b0e13]">
+                    <div class="text-center"><div class="text-[10px] text-slate-500 uppercase">VIX</div><div id="macro-vix" class="text-lg font-mono text-green-400 font-bold">--.--</div></div>
+                    <div class="w-px h-8 bg-slate-800"></div>
+                    <div class="text-center"><div class="text-[10px] text-slate-500 uppercase">那指期</div><div id="macro-nq" class="text-lg font-mono text-blue-400 font-bold">--,--</div></div>
+                </div>
+            </div>
+            
+            <div class="cyber-section flex-1 border-l-4 border-l-pink-500 min-h-0 flex flex-col">
+                <div class="section-title py-2"><span class="flex items-center gap-2 text-pink-400"><i data-lucide="briefcase" class="w-4 h-4"></i> 持倉部隊</span></div>
+                <div class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 bg-[#0b0e13]" id="positions-list"></div>
             </div>
         </div>
-        
-        <!-- AI Chat (Top Priority on Mobile for Insights) -->
-        <div class="cyber-section w-full lg:flex-1 flex flex-col border-blue-900/30 shadow-lg border-l-4 border-l-blue-600 h-64 lg:h-auto order-1 lg:order-3">
-            <div class="section-title bg-blue-900/10"><span class="text-blue-400 flex items-center gap-2 font-bold"><i data-lucide="bot" class="w-5 h-5"></i> 指導神軍師</span><select id="ai-target-select" class="cyber-select h-7 text-xs border-blue-900/50"><option value="ALL">戰局分析</option></select></div>
+        <!-- AI Chat (Modified v32.5) -->
+        <div class="cyber-section flex-1 flex flex-col border-blue-900/30 shadow-lg border-l-4 border-l-blue-600">
+            <div class="section-title bg-blue-900/10"><span class="text-blue-400 flex items-center gap-2 font-bold"><i data-lucide="bot" class="w-5 h-5"></i> AI 指導神軍師 & 日誌</span><select id="ai-target-select" class="cyber-select h-7 text-xs border-blue-900/50"><option value="ALL">全域戰局分析</option></select></div>
             
-            <!-- Divine Reason Sticky Header -->
-            <div class="bg-[#11161d] border-b border-slate-800 p-2 lg:p-3 flex gap-2 lg:gap-3 items-start shrink-0">
-                <div class="text-yellow-500 animate-pulse mt-0.5"><i data-lucide="zap" class="w-4 h-4 lg:w-5 lg:h-5"></i></div>
+            <!-- [v32.5 New] Divine Reason Sticky Header -->
+            <div class="bg-[#11161d] border-b border-slate-800 p-3 flex gap-3 items-start shrink-0">
+                <div class="text-yellow-500 animate-pulse mt-0.5"><i data-lucide="zap" class="w-5 h-5"></i></div>
                 <div class="flex-1">
-                    <div class="text-[9px] lg:text-[10px] text-yellow-600 font-bold uppercase tracking-wider mb-0.5">最新戰略點評 (Divine Reason)</div>
-                    <div id="divine-reason-text" class="text-xs lg:text-sm text-slate-200 font-bold leading-tight">等待軍師分析戰局中...</div>
+                    <div class="text-[10px] text-yellow-600 font-bold uppercase tracking-wider mb-0.5">最新戰略點評 (Divine Reason)</div>
+                    <div id="divine-reason-text" class="text-sm text-slate-200 font-bold leading-tight">等待軍師分析戰局中...</div>
                 </div>
             </div>
 
-            <div id="ai-chat-box" class="flex-1 overflow-y-auto custom-scroll p-3 lg:p-4 space-y-4 bg-[#0b0e13]">
-                <div class="flex gap-3 lg:gap-4">
-                    <div class="w-8 h-8 lg:w-10 lg:h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold text-white shadow-lg shadow-blue-900/30">軍師</div>
-                    <div class="bg-[#1c2128] border border-slate-700/50 p-3 lg:p-4 rounded-tr-xl rounded-br-xl rounded-bl-xl text-slate-300 text-xs lg:text-sm leading-relaxed max-w-[90%] shadow-md">
-                        指揮官您好，<span class="text-yellow-400 font-bold">戰術終端 v32.5 (Mobile)</span> 已啟動。頁面已支援捲動，請往下滑動查看完整數據。
+            <div id="ai-chat-box" class="flex-1 overflow-y-auto custom-scroll p-4 space-y-4 bg-[#0b0e13]">
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold text-white shadow-lg shadow-blue-900/30">軍師</div>
+                    <div class="bg-[#1c2128] border border-slate-700/50 p-4 rounded-tr-xl rounded-br-xl rounded-bl-xl text-slate-300 text-sm leading-relaxed max-w-[90%] shadow-md">
+                        指揮官您好，<span class="text-yellow-400 font-bold">戰術終端 v33.1</span> 已準備就緒。新增額度監控與量子動能模組。
                     </div>
                 </div>
             </div>
-            <div class="p-2 lg:p-4 border-t border-slate-800 flex gap-2 lg:gap-3 bg-[#161b22]">
-                <input type="text" id="ai-input" placeholder="指令..." class="flex-1 bg-[#0d1117] border border-slate-700 rounded-md px-3 py-2 text-xs lg:text-sm focus:border-blue-500 outline-none text-white transition-all">
-                <button onclick="askAI()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 lg:px-6 lg:py-2 rounded-md text-xs lg:text-sm font-bold transition-all">發送</button>
+            <div class="p-4 border-t border-slate-800 flex gap-3 bg-[#161b22]">
+                <input type="text" id="ai-input" placeholder="請輸入您的指令..." class="flex-1 bg-[#0d1117] border border-slate-700 rounded-md px-4 py-2 text-sm focus:border-blue-500 outline-none text-white placeholder-slate-600 transition-all">
+                <button onclick="askAI()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 rounded-md text-sm font-bold transition-all shadow-lg shadow-blue-900/20">發送</button>
             </div>
         </div>
     </div>
 
-    <!-- Dragon Matrix (Responsive List) -->
-    <!-- Increased min-height to ensure scrolling happens if content is long -->
-    <div class="flex-1 cyber-section flex flex-col shadow-2xl border-l-4 border-l-red-500 min-h-[500px]">
+    <!-- Dragon Matrix -->
+    <div class="flex-1 cyber-section flex flex-col shadow-2xl border-l-4 border-l-red-500 min-h-[300px]">
         <div class="section-title">
-            <span class="flex items-center gap-2 text-slate-200 font-bold text-sm lg:text-lg"><i data-lucide="zap" class="w-4 h-4 lg:w-5 lg:h-5 text-yellow-500 fill-yellow-500"></i> 十龍高頻矩陣</span>
-            <div class="hidden lg:flex gap-8 text-xs font-mono opacity-70">
+            <span class="flex items-center gap-2 text-slate-200 font-bold text-lg"><i data-lucide="zap" class="w-5 h-5 text-yellow-500 fill-yellow-500"></i> 十龍高頻監控矩陣 (Sorted by Tick Frequency)</span>
+            <div class="flex gap-8 text-xs font-mono opacity-70">
                 <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_5px_#f85149]"></div> OFI(多)</span>
                 <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#3fb950]"></div> OFI(空)</span>
                 <span class="flex items-center gap-2 text-slate-500">|</span>
-                <span>VWAP</span>
+                <span class="flex items-center gap-2"><div class="w-4 h-0.5 border border-slate-500 border-dashed"></div> 均價 (VWAP)</span>
             </div>
         </div>
         <div id="dragon-list" class="flex-1 overflow-y-auto custom-scroll bg-[#0b0e13]">
@@ -282,14 +271,14 @@
     </div>
 
     <!-- Footer -->
-    <div class="h-8 flex items-center justify-between px-4 lg:px-6 bg-[#161b22] border-t border-slate-800 text-[10px] lg:text-xs font-mono text-slate-500 flex-shrink-0">
-        <div class="flex gap-4 lg:gap-8">
-            <div id="footer-ws" class="text-red-500 flex items-center gap-2"><div class="w-2 h-2 lg:w-2.5 lg:h-2.5 rounded-full bg-red-500 animate-pulse"></div> BRIDGE: 斷線</div>
-            <span class="hidden lg:inline"><i data-lucide="server" class="w-4 h-4 inline"></i> CORE: v32.5</span>
+    <div class="h-8 flex items-center justify-between px-6 bg-[#161b22] border-t border-slate-800 text-xs font-mono text-slate-500 flex-shrink-0">
+        <div class="flex gap-8">
+            <div id="footer-ws" class="text-red-500 flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div> BRIDGE: 斷線</div>
+            <span><i data-lucide="server" class="w-4 h-4 inline"></i> CORE: v33.1 (Brain Integrated)</span>
         </div>
-        <div class="flex gap-4 lg:gap-8">
-            <div id="footer-latency" class="flex items-center gap-2"><i data-lucide="activity" class="w-3 h-3 lg:w-4 lg:h-4"></i> <span class="hidden lg:inline">延遲:</span> --ms</div>
-            <div id="footer-time" class="flex items-center gap-2 text-slate-400 font-bold"><i data-lucide="clock" class="w-3 h-3 lg:w-4 lg:h-4 text-blue-500"></i> --:--:--</div>
+        <div class="flex gap-8">
+            <div id="footer-latency" class="flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> 延遲: --ms</div>
+            <div id="footer-time" class="flex items-center gap-2 text-slate-400 font-bold"><i data-lucide="clock" class="w-4 h-4 text-blue-500"></i> --:--:--</div>
         </div>
     </div>
 
@@ -301,6 +290,8 @@
         let wsUrl = localStorage.getItem('canglong_ws_url') || 'ws://127.0.0.1:8000/ws';
         let POSITIONS = []; 
         let isRealDataReceiving = false; 
+
+        // [v8.14] Snapshot Mirroring Set
         let currentSnapshotSymbols = new Set();
 
         const dragonList = document.getElementById('dragon-list');
@@ -346,10 +337,10 @@
             if (hasActivePositions && unPnL) {
                  const val = Math.round(totalUnrealized);
                  unPnL.innerText = (val >= 0 ? '+$' : '-$') + Math.abs(val).toLocaleString();
-                 unPnL.className = `text-5xl lg:text-6xl font-mono font-black ${val >= 0 ? 'neon-text-red' : 'neon-text-green'} animate-pulse-glow`;
+                 unPnL.className = `text-6xl font-mono font-black ${val >= 0 ? 'neon-text-red' : 'neon-text-green'} animate-pulse-glow`;
             } else if (isRealDataReceiving && unPnL) {
                  unPnL.innerText = '+$0';
-                 unPnL.className = 'text-5xl lg:text-6xl font-mono font-black text-slate-500';
+                 unPnL.className = 'text-6xl font-mono font-black text-slate-500';
             }
         }
 
@@ -397,32 +388,15 @@
             row.id = `row-${d.symbol}`;
             row.setAttribute('data-sym', d.symbol);
             
-            // RWD Layout Structure:
-            // Mobile: 
-            // [Sym Name Tick] [Price Change]
-            // [   Bars (Piranha/OFI)       ]
-            // [   Chart                    ]
-            
             row.innerHTML = `
-                <!-- Symbol & Price (Mobile: Row, Desktop: Separate Cols) -->
-                <div class="flex justify-between items-center w-full lg:w-auto lg:contents">
-                    <div class="w-full lg:w-28 flex-shrink-0">
-                        <div class="text-xs font-mono text-blue-500 font-black tracking-tight">${d.symbol}</div>
-                        <div class="stock-name-div text-lg font-bold text-slate-200 mt-0.5">${d.name}</div>
-                        <div class="flex justify-between items-center mt-1">
-                            <div class="text-xs font-mono text-slate-500">Tick: <span id="tick-count-${d.symbol}" class="text-orange-400 font-bold text-sm">${d.tickCount || 0}</span></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Mobile Only Price Display (Hidden on Desktop) -->
-                    <div class="flex flex-col items-end lg:hidden">
-                        <div id="price-mob-${d.symbol}" class="text-2xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}">${safeFixed(d.price, 1)}</div>
-                        <div id="change-mob-${d.symbol}" class="text-sm font-bold px-2 py-0.5 rounded mt-1 ${d.change >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}">${(d.change > 0 ? '+' : '') + safeFixed(d.change * 100, 2)}%</div>
+                <div class="w-28 flex-shrink-0">
+                    <div class="text-xs font-mono text-blue-500 font-black tracking-tight">${d.symbol}</div>
+                    <div class="stock-name-div text-lg font-bold text-slate-200 mt-0.5">${d.name}</div>
+                    <div class="flex justify-between items-center mt-1">
+                        <div class="text-xs font-mono text-slate-500">Tick: <span id="tick-count-${d.symbol}" class="text-orange-400 font-bold text-sm">${d.tickCount || 0}</span></div>
                     </div>
                 </div>
-
-                <!-- Middle Section: Bars (Full width on mobile, Fixed on desktop) -->
-                <div class="w-full lg:w-72 flex-shrink-0 lg:border-l lg:border-slate-800 lg:pl-5 flex flex-col justify-center gap-2">
+                <div class="w-72 flex-shrink-0 border-l border-slate-800 pl-5 flex flex-col justify-center gap-2">
                     <div class="flex flex-col gap-1">
                         <div class="flex justify-between text-[11px] font-mono text-slate-500 uppercase tracking-wider">
                             <span>Piranha Radar</span>
@@ -444,30 +418,22 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Desktop Price (Hidden on Mobile) -->
-                <div class="hidden lg:flex w-32 flex-shrink-0 text-right border-l border-slate-800 px-3 flex-col justify-center">
+                <div class="w-32 flex-shrink-0 text-right border-l border-slate-800 px-3 flex flex-col justify-center">
                     <div id="price-${d.symbol}" class="text-3xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}">${safeFixed(d.price, 1)}</div>
                 </div>
-                <div class="hidden lg:flex w-20 flex-shrink-0 items-center justify-end px-3">
+                <div class="w-20 flex-shrink-0 flex items-center justify-end px-3">
                     <div id="change-${d.symbol}" class="text-sm font-bold px-2 py-1 rounded ${d.change >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}">${(d.change > 0 ? '+' : '') + safeFixed(d.change * 100, 2)}%</div>
                 </div>
-
-                <!-- Wall (Hidden on Mobile? No, let's keep it horizontal or hide) -> Hide for simplicity on phone, or show as bar -->
-                <div class="hidden lg:flex w-[60px] h-full flex-col justify-center border-l border-slate-800/50 px-2">
+                <div class="w-[60px] h-full flex flex-col justify-center border-l border-slate-800/50 px-2">
                     <div id="wall-${d.symbol}" class="wall-container"></div>
                 </div>
-
-                <!-- Chart (Full width on mobile, Flexible on desktop) -->
-                <div class="w-full h-10 lg:flex-1 lg:h-14 relative lg:px-3 lg:py-1 border-t lg:border-t-0 border-slate-800/50 mt-1 lg:mt-0 pt-1 lg:pt-0" id="chart-${d.symbol}">
+                <div class="flex-1 h-14 relative px-3 py-1" id="chart-${d.symbol}">
                     <svg id="svg-${d.symbol}" width="100%" height="100%"></svg>
                 </div>`;
             
             const wallEl = row.querySelector(`#wall-${d.symbol}`);
-            if(wallEl) {
-                for(let i=0; i<5; i++) { 
-                    wallEl.innerHTML += `<div class="wall-row"><div class="wall-bid-container"><div class="wall-bid-bar" style="width:0%" id="wall-bid-${d.symbol}-${i}"></div></div><div class="wall-ask-container"><div class="wall-ask-bar" style="width:0%" id="wall-ask-${d.symbol}-${i}"></div></div></div>`; 
-                }
+            for(let i=0; i<5; i++) { 
+                wallEl.innerHTML += `<div class="wall-row"><div class="wall-bid-container"><div class="wall-bid-bar" style="width:0%" id="wall-bid-${d.symbol}-${i}"></div></div><div class="wall-ask-container"><div class="wall-ask-bar" style="width:0%" id="wall-ask-${d.symbol}-${i}"></div></div></div>`; 
             }
             return row;
         }
@@ -518,26 +484,21 @@
             const d = stockData[sym];
             if (!d) return;
             
-            // Helper to update text and class
-            const updateEl = (id, text, className) => {
-                const el = document.getElementById(id);
-                if(el) { el.innerText = text; if(className) el.className = className; }
-            };
+            const pEl = document.getElementById(`price-${sym}`);
+            if (pEl) {
+                pEl.innerText = safeFixed(d.price, 1);
+                pEl.className = `text-3xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}`;
+            }
 
-            // Desktop Price
-            updateEl(`price-${sym}`, safeFixed(d.price, 1), `text-3xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}`);
-            // Mobile Price
-            updateEl(`price-mob-${sym}`, safeFixed(d.price, 1), `text-2xl font-mono font-bold ${d.price >= d.avg ? 'neon-text-red' : 'neon-text-green'}`);
+            const cEl = document.getElementById(`change-${sym}`);
+            if (cEl) {
+                const diff = d.change * 100;
+                cEl.innerText = (diff > 0 ? '+' : '') + safeFixed(diff, 2) + '%';
+                cEl.className = `text-sm font-bold px-2 py-1 rounded ${diff >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}`;
+            }
 
-            // Change (Desktop & Mobile)
-            const diff = d.change * 100;
-            const chgText = (diff > 0 ? '+' : '') + safeFixed(diff, 2) + '%';
-            const chgClass = `text-sm font-bold px-2 py-1 rounded ${diff >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}`;
-            
-            updateEl(`change-${sym}`, chgText, chgClass);
-            updateEl(`change-mob-${sym}`, chgText, `text-sm font-bold px-2 py-0.5 rounded mt-1 ${diff >= 0 ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}`);
-
-            updateEl(`tick-count-${sym}`, d.tickCount || 0);
+            const tcEl = document.getElementById(`tick-count-${sym}`);
+            if (tcEl) tcEl.innerText = d.tickCount || 0;
 
             const ofiValEl = document.getElementById(`ofi-val-${sym}`);
             const ofiBarEl = document.getElementById(`ofi-bar-${sym}`);
@@ -582,10 +543,10 @@
                 if (p.cost && p.cost !== 0) percentVal = (currPrice - p.cost) / p.cost * 100;
 
                 const item = document.createElement('div');
-                item.className = 'bg-[#161b22] p-2 rounded border border-slate-800 flex items-center justify-between group hover:border-pink-500/50 transition-all';
+                item.className = 'bg-[#161b22] p-3 rounded border border-slate-800 flex items-center justify-between group hover:border-pink-500/50 transition-all';
                 item.innerHTML = `
-                    <div class="flex flex-col"><div class="flex items-center gap-2"><span class="text-xs font-mono text-pink-400 font-bold">${p.sym}</span><span class="text-xs text-slate-300 font-bold truncate max-w-[80px] lg:max-w-none">${displayName}</span></div><span class="text-[10px] text-slate-500 mt-0.5">${p.side} ${p.qty} @ ${p.cost}</span></div>
-                    <div class="text-right"><div class="text-sm font-mono font-bold ${profitClass}">${profit >= 0 ? '+' : ''}${Math.round(profit).toLocaleString()}</div><div class="text-[10px] text-slate-500 font-mono">${safeFixed(percentVal, 2)}%</div></div>`;
+                    <div class="flex flex-col"><div class="flex items-center gap-2"><span class="text-xs font-mono text-pink-400 font-bold">${p.sym}</span><span class="text-sm text-slate-300 font-bold">${displayName}</span></div><span class="text-xs text-slate-500 mt-1">${p.side} ${p.qty} @ ${p.cost}</span></div>
+                    <div class="text-right"><div class="text-sm font-mono font-bold ${profitClass}">${profit >= 0 ? '+' : ''}${Math.round(profit).toLocaleString()}</div><div class="text-xs text-slate-500 font-mono">${safeFixed(percentVal, 2)}%</div></div>`;
                 list.appendChild(item);
             });
         }
@@ -636,6 +597,41 @@
             
             const tv = document.getElementById(`piranha-val-titan-${sym}`);
             if(tv) tv.innerText = `T:${safeFixed(titan, 0)}%`;
+        }
+
+        // --- [新增] 渲染函式 ---
+        function renderSectorHeat(data) {
+            const el = document.getElementById('sector-heat-container');
+            if(!el) return;
+            el.innerHTML = '';
+            if(!data || data.length===0) { el.innerHTML='<div class="text-xs text-slate-500 text-center">無數據</div>'; return; }
+            
+            data.forEach(item => {
+                const val = parseFloat(item.value);
+                const color = val >= 0 ? 'bg-red-500' : 'bg-green-500';
+                const txtColor = val >= 0 ? 'text-red-400' : 'text-green-400';
+                const width = Math.min(Math.abs(val)*50, 100);
+                
+                el.innerHTML += `
+                <div class="flex items-center gap-2 text-xs animate-fade-in">
+                    <span class="w-16 text-slate-400 text-right truncate" title="${item.name}">${item.name}</span>
+                    <div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full ${color} transition-all duration-500" style="width: ${width}%"></div>
+                    </div>
+                    <span class="${txtColor} font-mono w-12 text-right">${val>0?'+':''}${val.toFixed(2)}%</span>
+                </div>`;
+            });
+        }
+
+        function renderMacroStats(data) {
+            const vix = document.getElementById('macro-vix');
+            if(vix && data.VIX) {
+                const v = parseFloat(data.VIX);
+                vix.innerText = v.toFixed(1);
+                vix.className = v>20 ? "text-lg font-mono text-red-500 font-bold animate-pulse" : (v>15 ? "text-lg font-mono text-yellow-400 font-bold" : "text-lg font-mono text-green-400 font-bold");
+            }
+            const nq = document.getElementById('macro-nq');
+            if(nq && data.NQ) nq.innerText = Number(data.NQ).toLocaleString();
         }
 
         function runMainLoop() {
@@ -719,16 +715,20 @@
             });
         }
 
+        // [v33.1] 更新博弈腦核數據 (含 Quota & Kinetic)
         function updateBrainCore(brainCore) {
             if (!brainCore) return;
             
+            // 1. Divine Reason
             const drEl = document.getElementById('divine-reason-text');
             if (drEl && brainCore.divine_reason) {
                 drEl.innerText = brainCore.divine_reason;
             }
 
+            // 2. Market Status (RS, Mode, Weights)
             const ms = brainCore.market_status;
             if (ms) {
+                // Mode
                 const modeEl = document.getElementById('core-mode');
                 if (modeEl && ms.mode) {
                     modeEl.innerText = ms.mode;
@@ -737,12 +737,14 @@
                     else modeEl.className = "text-sm font-black text-yellow-400 neon-text-yellow tracking-wide";
                 }
                 
+                // RS
                 const rsEl = document.getElementById('core-rs');
                 if (rsEl && ms.rs_value !== undefined) {
                     rsEl.innerText = `RS: ${safeFixed(ms.rs_value, 2)}`;
                     rsEl.className = `text-xs font-mono px-1.5 py-0.5 rounded border border-slate-700 ${ms.rs_value > 1.05 ? 'text-red-400 bg-red-900/20' : (ms.rs_value < 0.95 ? 'text-green-400 bg-green-900/20' : 'text-slate-300 bg-slate-800')}`;
                 }
 
+                // Weights
                 if (ms.weights) {
                     try {
                         const parts = ms.weights.split('|');
@@ -753,12 +755,61 @@
                             if (p.startsWith('T:')) t = Number(p.split(':')[1]);
                             if (p.startsWith('C:')) c = Number(p.split(':')[1]);
                         });
-                        
                         document.getElementById('w-macro').style.width = `${m}%`;
                         document.getElementById('w-tech').style.width = `${t}%`;
                         document.getElementById('w-chip').style.width = `${c}%`;
                         document.getElementById('core-weights-txt').innerText = `${m}/${t}/${c}`;
                     } catch(e) { console.error("Weights parse error", e); }
+                }
+            }
+
+            // 3. Quota Status (New in v33.1)
+            const qs = brainCore.quota_status;
+            if (qs) {
+                const usagePct = (qs.usage_rate * 100).toFixed(1);
+                const qBar = document.getElementById('quota-bar');
+                const qText = document.getElementById('quota-text');
+                if(qBar && qText) {
+                    qBar.style.width = `${usagePct}%`;
+                    qText.innerText = `${usagePct}%`;
+                    
+                    if(qs.is_danger) {
+                         qBar.className = "h-full bg-red-600 transition-all duration-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]";
+                         qText.className = "text-red-500 animate-pulse";
+                    } else if (qs.usage_rate > 0.5) {
+                         qBar.className = "h-full bg-yellow-500 transition-all duration-500";
+                         qText.className = "text-yellow-400";
+                    } else {
+                         qBar.className = "h-full bg-blue-600 transition-all duration-500";
+                         qText.className = "text-blue-400";
+                    }
+                }
+            }
+
+            // 4. Entropy Analytics (New in v33.1)
+            const ea = brainCore.entropy_analytics;
+            if (ea) {
+                const rvolEl = document.getElementById('entropy-rvol');
+                const alertEl = document.getElementById('entropy-alert');
+                const effEl = document.getElementById('entropy-eff');
+                
+                if(rvolEl) {
+                    rvolEl.innerText = `RVOL:${Number(ea.rvol).toFixed(1)}`;
+                    rvolEl.className = Number(ea.rvol) > 2.0 ? "text-xs font-mono text-yellow-300 font-bold" : "text-xs font-mono text-slate-400";
+                }
+                
+                if(effEl) effEl.innerText = `Eff:${Number(ea.efficiency).toFixed(4)}`;
+                
+                if(alertEl) {
+                    const txt = ea.alert || "N/A";
+                    alertEl.innerText = txt;
+                    if(txt.includes("竭盡") || txt.includes("背離")) {
+                         alertEl.className = "text-[9px] font-bold text-red-100 bg-red-900/50 px-1.5 rounded animate-pulse tracking-tight";
+                    } else if (txt.includes("共振") || txt.includes("吸貨")) {
+                         alertEl.className = "text-[9px] font-bold text-green-100 bg-green-900/50 px-1.5 rounded tracking-tight";
+                    } else {
+                         alertEl.className = "text-[9px] font-bold text-slate-500 bg-slate-800 px-1.5 rounded tracking-tight";
+                    }
                 }
             }
         }
@@ -870,6 +921,7 @@
                     if (msg.data) {
                         isRealDataReceiving = true;
                         
+                        // [v33.1] Update Brain Core
                         if (msg.data.brain_core) {
                             updateBrainCore(msg.data.brain_core);
                         }
@@ -929,6 +981,13 @@
                 }
                 else if (msg.type === 'DASHBOARD_DECISIONS') {
                     if (Array.isArray(msg.data)) appendDecision(msg.data);
+                }
+                // --- [v33.0 新增] 接收來自 Bridge 的解析事件 ---
+                else if (msg.type === 'SECTOR_UPDATE') {
+                    renderSectorHeat(msg.data);
+                }
+                else if (msg.type === 'MACRO_UPDATE') {
+                    renderMacroStats(msg.data);
                 }
             };
         }
